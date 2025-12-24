@@ -1,8 +1,8 @@
-export const categoryData = {
+export const categories = {
   "22KT Ready": [
     {
       title: "Pendant",
-      img: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=800&q=80",
+      img: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=800&q=80",
       slug: "pendant",
     },
     {
@@ -12,17 +12,17 @@ export const categoryData = {
     },
     {
       title: "Chain Set",
-      img: "https://images.unsplash.com/photo-1597045566677-8cf032ed6634?auto=format&fit=crop&w=800&q=80",
+      img: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=800&q=80",
       slug: "chain-set",
     },
     {
       title: "Maang Tikka",
-      img: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&w=800&q=80",
+      img: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=800&q=80",
       slug: "maang-tikka",
     },
     {
       title: "Couple Band",
-      img: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=800&q=80",
+      img: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=800&q=80",
       slug: "couple-band",
     },
     {
@@ -40,7 +40,7 @@ export const categoryData = {
   "18KT Ready": [
     {
       title: "Pendant",
-      img: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=800&q=80",
+      img: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=800&q=80",
       slug: "pendant-18kt",
     },
     {
@@ -50,17 +50,17 @@ export const categoryData = {
     },
     {
       title: "Chain Set",
-      img: "https://images.unsplash.com/photo-1597045566677-8cf032ed6634?auto=format&fit=crop&w=800&q=80",
+      img: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=800&q=80",
       slug: "chain-set-18kt",
     },
     {
       title: "Maang Tikka",
-      img: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&w=800&q=80",
+      img: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=800&q=80",
       slug: "maang-tikka-18kt",
     },
     {
       title: "Couple Band",
-      img: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=800&q=80",
+      img: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=800&q=80",
       slug: "couple-band-18kt",
     },
     {
@@ -83,7 +83,7 @@ export const categoryData = {
     },
     {
       title: "Chain",
-      img: "https://images.unsplash.com/photo-1597045566677-8cf032ed6634?auto=format&fit=crop&w=800&q=80",
+      img: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=800&q=80",
       slug: "chain-gold",
     },
     {
@@ -93,7 +93,7 @@ export const categoryData = {
     },
     {
       title: "Paper Casting",
-      img: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&w=800&q=80",
+      img: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=800&q=80",
       slug: "paper-casting",
     },
     {
@@ -103,12 +103,12 @@ export const categoryData = {
     },
     {
       title: "Lightweight Laser",
-      img: "https://images.unsplash.com/photo-1597045566677-8cf032ed6634?auto=format&fit=crop&w=800&q=80",
+      img: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=800&q=80",
       slug: "lightweight-laser",
     },
     {
       title: "Veera Gold",
-      img: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&w=800&q=80",
+      img: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=800&q=80",
       slug: "veera-gold",
     },
     {
@@ -118,12 +118,12 @@ export const categoryData = {
     },
     {
       title: "Cuban",
-      img: "https://images.unsplash.com/photo-1597045566677-8cf032ed6634?auto=format&fit=crop&w=800&q=80",
+      img: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=800&q=80",
       slug: "cuban-gold",
     },
     {
       title: "Italian",
-      img: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&w=800&q=80",
+      img: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=800&q=80",
       slug: "italian",
     },
     {
@@ -133,7 +133,7 @@ export const categoryData = {
     },
     {
       title: "Laser Cut",
-      img: "https://images.unsplash.com/photo-1597045566677-8cf032ed6634?auto=format&fit=crop&w=800&q=80",
+      img: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=800&q=80",
       slug: "laser-cut",
     },
     {
@@ -143,7 +143,7 @@ export const categoryData = {
     },
     {
       title: "Casting",
-      img: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&w=800&q=80",
+      img: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=800&q=80",
       slug: "casting",
     },
     {
@@ -153,7 +153,7 @@ export const categoryData = {
     },
     {
       title: "Bracelet",
-      img: "https://images.unsplash.com/photo-1597045566677-8cf032ed6634?auto=format&fit=crop&w=800&q=80",
+      img: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=800&q=80",
       slug: "bracelet-gold",
     },
   ],
@@ -161,17 +161,17 @@ export const categoryData = {
   "Gold Order Product": [
     {
       title: "Bangle & Kada",
-      img: "https://images.unsplash.com/photo-1594576722512-582d5577dc56?auto=format&fit=crop&w=800&q=80",
+      img: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=800&q=80",
       slug: "bangle-kada",
     },
     {
       title: "Chain",
-      img: "https://images.unsplash.com/photo-1597045566677-8cf032ed6634?auto=format&fit=crop&w=800&q=80",
+      img: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=800&q=80",
       slug: "chain-product",
     },
     {
       title: "Bracelet",
-      img: "https://images.unsplash.com/photo-1597045566677-8cf032ed6634?auto=format&fit=crop&w=800&q=80",
+      img: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=800&q=80",
       slug: "bracelet-product",
     },
     {
@@ -181,7 +181,7 @@ export const categoryData = {
     },
     {
       title: "Jhumka",
-      img: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&w=800&q=80",
+      img: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=800&q=80",
       slug: "jhumka",
     },
     {
@@ -191,17 +191,17 @@ export const categoryData = {
     },
     {
       title: "Ear Top",
-      img: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&w=800&q=80",
+      img: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=800&q=80",
       slug: "ear-top",
     },
     {
       title: "Ladies Ring",
-      img: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=800&q=80",
+      img: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=800&q=80",
       slug: "ladies-ring",
     },
     {
       title: "Gents Ring",
-      img: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=800&q=80",
+      img: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=800&q=80",
       slug: "gents-ring",
     },
   ],
@@ -214,12 +214,12 @@ export const categoryData = {
     },
     {
       title: "Silver 925 Purity",
-      img: "https://images.unsplash.com/photo-1597045566677-8cf032ed6634?auto=format&fit=crop&w=800&q=80",
+      img: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=800&q=80",
       slug: "silver-925",
     },
     {
       title: "Silver 40 Purity",
-      img: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&w=800&q=80",
+      img: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=800&q=80",
       slug: "silver-40",
     },
     {
@@ -240,12 +240,12 @@ export const categoryData = {
   "Lab Grown Order": [
     {
       title: "Ladies Rings",
-      img: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=800&q=80",
+      img: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=800&q=80",
       slug: "ladies-rings-lab",
     },
     {
       title: "Ear Tops",
-      img: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&w=800&q=80",
+      img: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=800&q=80",
       slug: "ear-tops-lab",
     },
   ],
@@ -253,17 +253,17 @@ export const categoryData = {
   Coins: [
     {
       title: "Gold 995",
-      img: "https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fit=crop&w=800&q=80",
+      img: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=800&q=80",
       slug: "gold-995",
     },
     {
       title: "Gold 999",
-      img: "https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fit=crop&w=800&q=80",
+      img: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=800&q=80",
       slug: "gold-999",
     },
     {
       title: "Silver 999",
-      img: "https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fit=crop&w=800&q=80",
+      img: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=800&q=80",
       slug: "silver-999",
     },
   ],

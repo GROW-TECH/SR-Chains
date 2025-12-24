@@ -1,38 +1,37 @@
 import { Routes, Route } from "react-router-dom";
-import NotFoundPage from "./pages/NotFoundPage";
+
+import Header from "./pages/Header";
+
 import HomePage from "./pages/HomePage";
 import ProfilePage from "./pages/ProfilePage/ProfilePage";
-import { useSelector } from "react-redux";
-import { useToast } from "@chakra-ui/react";
+import ShopByCategory from "./pages/ShopByCategory";
+import CollectionPage from "./pages/CollectionPage";
+import CartPage from "./components/CartPage";
+import KTReadyPage from "./pages/KTReadyPage";
+import ProductDetails from "./pages/ProductDetails";
 
 const App = () => {
-  const user = useSelector((state) => state.user);
-  const toast = useToast();
-
-  // useEffect(() => {
-  //   if (user.message && !user.name) {
-  //     toast({
-  //       title: user.message,
-  //       status: "error",
-  //       duration: 4000,
-  //       isClosable: true,
-  //     });
-  //   } else if (user.name) {
-  //     toast({
-  //       title: "Signed up successfully",
-  //       status: "success",
-  //       duration: 4000,
-  //       isClosable: true,
-  //     });
-  //   }
-  // }, [user]);
-
   return (
-    <Routes>
-      <Route path="/" element={<HomePage />} />
-      <Route path="/profile" element={<ProfilePage />} />
-      <Route path="*" element={<NotFoundPage />} />
-    </Routes>
+    <>
+      {/* 🔹 COMMON HEADER */}
+      <Header />
+
+      {/* 🔹 ROUTES */}
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/categories" element={<ShopByCategory />} />
+        <Route path="/22kt-ready" element={<KTReadyPage />} />
+
+        <Route
+          path="/collection/:category/:subCategory/:page"
+          element={<ProductDetails />}
+        />
+
+        <Route path="/collection/:slug" element={<CollectionPage />} />
+        <Route path="/cart" element={<CartPage />} />
+        <Route path="/profile" element={<ProfilePage />} />
+      </Routes>
+    </>
   );
 };
 
