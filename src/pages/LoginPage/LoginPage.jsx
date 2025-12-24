@@ -1,14 +1,18 @@
 import { useState } from "react";
-import PropTypes from "prop-types";
 import { Spinner, useToast } from "@chakra-ui/react";
 import { ImCross } from "react-icons/im";
+import { useNavigate } from "react-router-dom";
 
-const LoginPage = ({ setShowLoginPage }) => {
+const LoginPage = () => {
   const [loginDetails, setLoginDetails] = useState({
     mobile: "",
   });
   const [loading, setLoading] = useState(false);
+
   const toast = useToast();
+  const navigate = useNavigate();
+
+  /* ================= HANDLERS ================= */
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -26,7 +30,6 @@ const LoginPage = ({ setShowLoginPage }) => {
 
     setLoading(true);
 
-    // Mock OTP API
     setTimeout(() => {
       setLoading(false);
       toast({
@@ -36,19 +39,36 @@ const LoginPage = ({ setShowLoginPage }) => {
         duration: 4000,
         isClosable: true,
       });
+
+      // 🔥 after OTP sent (optional)
+      // navigate("/orders");
     }, 1200);
   };
 
+  const goToSignup = () => {
+    navigate("/signup");
+  };
+
+  const goBack = () => {
+    navigate(-1); // back
+  };
+
+  /* ================= UI ================= */
+
   return (
-    <main className="bg-black/90 fixed inset-0 flex justify-center items-center z-20">
+    <main className="bg-black/90 fixed inset-0 flex justify-center items-center z-50">
       <div className="bg-white flex flex-col p-6 rounded-lg w-1/3 max-[500px]:w-[90%]">
+
         {/* HEADER */}
         <header className="flex justify-between items-center mb-6">
           <span className="text-2xl font-medium text-gray-700">
             Login with Mobile
           </span>
+
           <ImCross
-            onClick={() => setShowLoginPage(false)}
+            onClick={() => {
+              navigate('/');
+            }}
             className="cursor-pointer text-black"
           />
         </header>
@@ -56,7 +76,7 @@ const LoginPage = ({ setShowLoginPage }) => {
         {/* FORM */}
         <form
           onSubmit={handleSubmit}
-          className="flex flex-col gap-4 pb-8 mb-2 border-b"
+          className="flex flex-col gap-4 pb-6 mb-4 border-b"
         >
           <input
             type="tel"
@@ -75,23 +95,29 @@ const LoginPage = ({ setShowLoginPage }) => {
 
           <button
             type="submit"
-            className="bg-primary text-white p-3 rounded-lg font-medium"
+            className="bg-primary text-white p-3 rounded-lg font-medium flex justify-center"
           >
             {loading ? <Spinner size="sm" /> : "Send OTP"}
           </button>
         </form>
 
         {/* FOOTER */}
-        <p className="text-sm text-gray-600 mt-4 text-center">
+        <p className="text-sm text-gray-600 text-center">
           You will receive an OTP on your mobile number
+        </p>
+
+        <p className="text-sm text-center mt-3">
+          New user?{" "}
+          <span
+            onClick={goToSignup}
+            className="text-blue-600 cursor-pointer font-medium"
+          >
+            Sign up
+          </span>
         </p>
       </div>
     </main>
   );
-};
-
-LoginPage.propTypes = {
-  setShowLoginPage: PropTypes.func.isRequired,
 };
 
 export default LoginPage;

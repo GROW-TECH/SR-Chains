@@ -70,22 +70,22 @@ export default function CartPage() {
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-6">
       {/* Breadcrumb */}
-      <div className="flex items-center gap-2 mb-6 text-sm text-gray-600">
-        <span className="font-medium">SHOPPING CART</span>
+      <div className="mb-6 text-sm text-gray-600 font-medium">
+        SHOPPING CART
       </div>
 
       <div className="flex flex-col lg:flex-row gap-6 max-w-7xl mx-auto">
         {/* CART ITEMS */}
         <div className="lg:w-2/3">
           <div className="bg-white rounded-xl shadow-md p-4 md:p-6">
-            <h2 className="text-xl md:text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+            <h2 className="text-xl md:text-2xl font-bold text-gray-800 mb-6">
               Shopping Cart
             </h2>
 
             {cart.length === 0 ? (
               <div className="text-center py-16">
-                <p className="text-gray-500 text-lg mb-4">Your cart is empty</p>
-                <button className="text-green-600 underline font-medium">
+                <p className="text-gray-500 text-sm mb-4">Your cart is empty</p>
+                <button className="text-[#b46b74] underline text-sm hover:text-[#9f5961]">
                   Continue Shopping →
                 </button>
               </div>
@@ -100,61 +100,57 @@ export default function CartPage() {
                 return (
                   <div
                     key={item.product._id}
-                    className="flex flex-col sm:flex-row gap-4 p-4 border-b border-gray-200 last:border-b-0"
+                    className="flex flex-col sm:flex-row gap-4 p-4 border-b last:border-b-0"
                   >
-                    {/* Product Image */}
+                    {/* Image */}
                     <div className="sm:w-32 md:w-40">
                       <img
                         src={item.product.imageUrl}
                         alt={item.product.name}
-                        className="w-full h-auto rounded-lg object-cover"
+                        className="w-full rounded-lg object-cover"
                         onError={(e) => {
                           e.target.src =
-                            "https://via.placeholder.com/300x300?text=Silver+Jewellery";
+                            "https://via.placeholder.com/300x300?text=Silver";
                         }}
                       />
                     </div>
 
-                    {/* Product Info */}
+                    {/* Info */}
                     <div className="flex-1">
                       <h3 className="text-lg font-semibold text-gray-800 mb-2">
                         {item.product.name}
                       </h3>
 
-                      <div className="flex items-center gap-3 mb-4 flex-wrap">
-                        <span className="text-xl font-bold text-gray-900">
+                      <div className="flex items-center gap-3 mb-4 flex-wrap text-sm">
+                        <span className="text-lg font-bold text-gray-900">
                           ₹{item.product.price.toLocaleString()}
                         </span>
-                        <span className="text-lg text-gray-500 line-through">
+                        <span className="text-gray-500 line-through">
                           ₹{item.product.oldPrice.toLocaleString()}
                         </span>
-                        <span className="text-sm text-green-600 font-medium">
+                        <span className="text-[#b46b74] font-medium">
                           ({discountPercent}% OFF)
                         </span>
                       </div>
 
-                      {/* Quantity Controls */}
+                      {/* Quantity */}
                       <div className="flex flex-wrap items-center justify-between gap-4">
-                        <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden">
+                        <div className="flex items-center border rounded-lg overflow-hidden text-sm">
                           <button
                             disabled={item.quantity === 1}
                             onClick={() => decreaseQty(item.product._id)}
-                            className={`px-4 py-2 font-medium ${
-                              item.quantity === 1
-                                ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                                : "bg-gray-100 hover:bg-gray-200 text-gray-700"
-                            }`}
+                            className="px-4 py-2 bg-gray-100 disabled:text-gray-400"
                           >
                             −
                           </button>
 
-                          <span className="px-4 py-2 text-center min-w-[60px] font-medium">
+                          <span className="px-4 py-2 min-w-[50px] text-center font-medium">
                             {item.quantity}
                           </span>
 
                           <button
                             onClick={() => increaseQty(item.product._id)}
-                            className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium"
+                            className="px-4 py-2 bg-gray-100"
                           >
                             +
                           </button>
@@ -162,9 +158,9 @@ export default function CartPage() {
 
                         <button
                           onClick={() => removeItem(item.product._id)}
-                          className="flex items-center gap-2 px-4 py-2 text-red-600 hover:text-red-800 font-medium border border-red-200 hover:border-red-300 rounded-lg transition-colors"
+                          className="px-4 py-2 text-sm border border-[#b46b74] text-[#b46b74] rounded-lg hover:bg-[#b46b74] hover:text-white transition"
                         >
-                          🗑 Remove
+                          Remove
                         </button>
                       </div>
                     </div>
@@ -178,37 +174,31 @@ export default function CartPage() {
         {/* ORDER SUMMARY */}
         <div className="lg:w-1/3">
           <div className="bg-white rounded-xl shadow-md p-6 sticky top-6">
-            <h3 className="text-xl font-bold text-gray-800 mb-6 pb-4 border-b">
+            <h3 className="text-lg font-bold text-gray-800 mb-6 pb-4 border-b">
               ORDER SUMMARY
             </h3>
 
-            <div className="space-y-4 mb-6">
+            <div className="space-y-4 mb-6 text-sm">
               <div className="flex justify-between">
-                <span className="text-gray-600">Total Amount (Before Tax)</span>
-                <span className="font-medium">
-                  ₹{cartTotal.toLocaleString()}
+                <span>Total Amount</span>
+                <span>₹{cartTotal.toLocaleString()}</span>
+              </div>
+
+              <div className="flex justify-between">
+                <span>Tax (3%)</span>
+                <span>₹{tax.toLocaleString()}</span>
+              </div>
+
+              <div className="pt-4 border-t flex justify-between">
+                <span className="font-bold">GRAND TOTAL</span>
+                <span className="text-xl font-bold text-[#b46b74]">
+                  ₹{grandTotal.toLocaleString()}
                 </span>
-              </div>
-
-              <div className="flex justify-between">
-                <span className="text-gray-600">Tax (3%)</span>
-                <span className="font-medium">₹{tax.toLocaleString()}</span>
-              </div>
-
-              <div className="pt-4 border-t">
-                <div className="flex justify-between">
-                  <span className="text-lg font-bold text-gray-800">
-                    GRAND TOTAL
-                  </span>
-                  <span className="text-2xl font-bold text-green-700">
-                    ₹{grandTotal.toLocaleString()}
-                  </span>
-                </div>
               </div>
             </div>
 
             <button
-              className="w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-4 rounded-lg transition text-lg"
+              className="w-full bg-[#b46b74] hover:bg-[#9f5961] text-white font-medium py-3 rounded-lg transition text-sm"
               onClick={() =>
                 toast({
                   title: "Demo Checkout",
@@ -230,6 +220,7 @@ export default function CartPage() {
           </div>
         </div>
       </div>
+
       <Footer />
     </div>
   );

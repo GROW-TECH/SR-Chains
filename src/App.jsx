@@ -1,7 +1,5 @@
 import { Routes, Route } from "react-router-dom";
 
-import Header from "./pages/Header";
-
 import HomePage from "./pages/HomePage";
 import ProfilePage from "./pages/ProfilePage/ProfilePage";
 import ShopByCategory from "./pages/ShopByCategory";
@@ -9,14 +7,12 @@ import CollectionPage from "./pages/CollectionPage";
 import CartPage from "./components/CartPage";
 import KTReadyPage from "./pages/KTReadyPage";
 import ProductDetails from "./pages/ProductDetails";
+import LoginPage from "./pages/LoginPage";
+import SignupPage from "./pages/SignupPage";
 
 const App = () => {
   return (
     <>
-      {/* 🔹 COMMON HEADER */}
-      <Header />
-
-      {/* 🔹 ROUTES */}
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/categories" element={<ShopByCategory />} />
@@ -29,7 +25,12 @@ const App = () => {
 
         <Route path="/collection/:slug" element={<CollectionPage />} />
         <Route path="/cart" element={<CartPage />} />
+        <Route path="/orders" element={<CartPage />} />
         <Route path="/profile" element={<ProfilePage />} />
+
+        {/* ✅ AUTH ROUTES */}
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignupPage />} />
       </Routes>
     </>
   );

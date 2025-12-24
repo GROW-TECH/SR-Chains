@@ -119,7 +119,7 @@ const HomePage = () => {
           Popular Categories
         </h2>
 
-        <div className="grid grid-cols-3 md:grid-cols-3 gap-10 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-1 gap-10 max-w-6xl mx-auto">
           {categoriesData.map((cat) => (
             <CategoryCard
               key={cat.id}

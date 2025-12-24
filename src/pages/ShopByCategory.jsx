@@ -1,82 +1,81 @@
 import { useNavigate } from "react-router-dom";
 import CategoryCard from "../components/CategoryCard";
 import Footer from "../components/Footer";
+import { useState, useEffect } from "react"; // Added imports
 
 // Try to import categories (adjust the path as needed)
-let categoriesData = [];
-
-try {
-  // Try named import first
-  import("../components/data/Categories")
-    .then((module) => {
-      if (module.categories) {
-        categoriesData = module.categories;
-      } else if (module.default) {
-        categoriesData = module.default;
-      }
-    })
-    .catch(() => {
-      console.log("Categories data not found, using fallback");
-      categoriesData = getFallbackCategories();
-    });
-} catch (error) {
-  console.error("Error loading categories:", error);
-  categoriesData = getFallbackCategories();
-}
-
-// Fallback categories if the import fails
-const getFallbackCategories = () => [
-  {
-    title: "Gold Necklaces",
-    category: "necklaces",
-    subCategory: "gold",
-    image:
-      "https://i.pinimg.com/736x/8a/65/2d/8a652d1a98f2166852ff0aa299d24dba.jpg",
-    description: "Elegant gold necklace designs",
-  },
-  {
-    title: "Silver Rings",
-    category: "rings",
-    subCategory: "silver",
-    image:
-      "https://images.unsplash.com/photo-1605100804763-247f67b3557e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    description: "Handcrafted silver rings",
-  },
-  {
-    title: "Diamond Earrings",
-    category: "earrings",
-    subCategory: "diamond",
-    image:
-      "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-    description: "Sparkling diamond earrings",
-  },
-  {
-    title: "Gold Bangles",
-    category: "bangles",
-    subCategory: "gold",
-    image:
-      "https://i.pinimg.com/736x/76/22/71/7622714e047ca29c9bf41198dd84183e.jpg",
-    description: "Traditional gold bangles",
-  },
-  {
-    title: "Pearl Sets",
-    category: "sets",
-    subCategory: "pearl",
-    image:
-      "https://i.pinimg.com/736x/e8/2a/9c/e82a9c2a9fe91d53238932f6387e06aa.jpg",
-    description: "Classic pearl jewellery sets",
-  },
-];
-
 const ShopByCategory = () => {
   const navigate = useNavigate();
+  const [categoriesData, setCategoriesData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Use categoriesData in your component
-  const categories =
-    categoriesData.length > 0 ? categoriesData : getFallbackCategories();
+  useEffect(() => {
+    // Load categories data asynchronously
+    const loadCategories = async () => {
+      try {
+        // Try named import first
+        const module = await import("../components/data/Categories");
+        if (module.categories) {
+          setCategoriesData(module.categories);
+        } else if (module.default) {
+          setCategoriesData(module.default);
+        }
+      } catch (error) {
+        console.log("Categories data not found, using fallback");
+        setCategoriesData(getFallbackCategories());
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadCategories();
+  }, []);
+
+  // Fallback categories if the import fails
+  const getFallbackCategories = () => [
+    {
+      title: "Gold Necklaces",
+      category: "necklaces",
+      subCategory: "gold",
+      image:
+        "https://i.pinimg.com/736x/8a/65/2d/8a652d1a98f2166852ff0aa299d24dba.jpg",
+      description: "Elegant gold necklace designs",
+    },
+    {
+      title: "Silver Rings",
+      category: "rings",
+      subCategory: "silver",
+      image:
+        "https://images.unsplash.com/photo-1605100804763-247f67b3557e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+      description: "Handcrafted silver rings",
+    },
+    {
+      title: "Diamond Earrings",
+      category: "earrings",
+      subCategory: "diamond",
+      image:
+        "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+      description: "Sparkling diamond earrings",
+    },
+    {
+      title: "Gold Bangles",
+      category: "bangles",
+      subCategory: "gold",
+      image:
+        "https://i.pinimg.com/736x/76/22/71/7622714e047ca29c9bf41198dd84183e.jpg",
+      description: "Traditional gold bangles",
+    },
+    {
+      title: "Pearl Sets",
+      category: "sets",
+      subCategory: "pearl",
+      image:
+        "https://i.pinimg.com/736x/e8/2a/9c/e82a9c2a9fe91d53238932f6387e06aa.jpg",
+      description: "Classic pearl jewellery sets",
+    },
+  ];
 
   const handleViewAllCollections = () => {
-    // Navigate to categories page or all collections page
     navigate("/categories");
   };
 
@@ -86,9 +85,23 @@ const ShopByCategory = () => {
   };
 
   const handleShopAllClick = () => {
-    // Navigate to all products page
     navigate("/products");
   };
+
+  // Use categoriesData in your component
+  const categories =
+    categoriesData.length > 0 ? categoriesData : getFallbackCategories();
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#b46b74] mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading categories...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -123,13 +136,7 @@ const ShopByCategory = () => {
           <div
             onClick={handleShopAllClick}
             className="rounded-3xl overflow-hidden shadow-lg cursor-pointer hover:shadow-xl transition"
-          >
-            <img
-              src="https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0"
-              alt="Jewellery Banner"
-              className="w-full h-[320px] md:h-[420px] object-cover hover:scale-105 transition-transform duration-300"
-            />
-          </div>
+          ></div>
         </div>
       </div>
 
@@ -166,7 +173,6 @@ const ShopByCategory = () => {
                     `Explore our ${item.title.toLowerCase()} collection`
                   }
                   img={item.image}
-                  slug={`${item.category}/${item.subCategory}/1`}
                 />
               </div>
             ))}

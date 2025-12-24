@@ -1,8 +1,11 @@
 import { useState } from "react";
 import PropTypes from "prop-types";
 import { ImCross } from "react-icons/im";
+import { useNavigate } from "react-router-dom";
 
 const SignUpPage = ({ setShowSignupPage, setShowLoginPage }) => {
+  const navigate = useNavigate();
+
   const [form, setForm] = useState({
     name: "",
     mobile: "",
@@ -11,8 +14,11 @@ const SignUpPage = ({ setShowSignupPage, setShowLoginPage }) => {
     agreement: false,
   });
 
+  /* ================= HANDLERS ================= */
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
+
     setForm({
       ...form,
       [name]: type === "checkbox" ? checked : value,
@@ -33,33 +39,50 @@ const SignUpPage = ({ setShowSignupPage, setShowLoginPage }) => {
       return;
     }
 
-    // 🔥 Send to backend with status = PENDING
+    // 🔥 Send to backend (status = PENDING)
     console.log("Signup data (Pending Approval):", form);
 
     alert("Signup submitted. Waiting for admin approval.");
-    setShowSignupPage(false);
+
+    // close modal if exists
+    if (setShowSignupPage) setShowSignupPage(false);
+
+    // optional: redirect after submit
+    navigate("/");
   };
 
+  const goToLogin = () => {
+    if (setShowSignupPage) setShowSignupPage(false);
+    if (setShowLoginPage) {
+      setShowLoginPage(true); // modal-based login
+    } else {
+      navigate("/login"); // route-based login
+    }
+  };
+
+  /* ================= UI ================= */
+
   return (
-    <main className="bg-black/90 fixed inset-0 flex justify-center items-center z-10">
+    <main className="bg-black/90 fixed inset-0 flex justify-center items-center z-50">
       <div className="bg-white p-6 rounded-lg w-1/2 max-[500px]:w-[90%]">
-        {/* HEADER */}
+        {/* 🔹 HEADER */}
         <header className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-medium">Create Account</h2>
+          <h2 className="text-2xl font-medium text-gray-700">Create Account</h2>
+
           <ImCross
-            className="cursor-pointer"
-            onClick={() => setShowSignupPage(false)}
+            className="cursor-pointer text-black"
+            onClick={() => setShowSignupPage && setShowSignupPage(false)}
           />
         </header>
 
-        {/* FORM */}
+        {/* 🔹 FORM */}
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <input
             name="name"
             placeholder="Business Name"
             value={form.name}
             onChange={handleChange}
-            className="border p-2 rounded"
+            className="border p-3 rounded outline-none"
           />
 
           <input
@@ -68,9 +91,12 @@ const SignUpPage = ({ setShowSignupPage, setShowLoginPage }) => {
             maxLength={10}
             value={form.mobile}
             onChange={(e) =>
-              setForm({ ...form, mobile: e.target.value.replace(/\D/g, "") })
+              setForm({
+                ...form,
+                mobile: e.target.value.replace(/[^0-9]/g, ""),
+              })
             }
-            className="border p-2 rounded"
+            className="border p-3 rounded outline-none"
           />
 
           <input
@@ -78,7 +104,7 @@ const SignUpPage = ({ setShowSignupPage, setShowLoginPage }) => {
             placeholder="GST Number"
             value={form.gst}
             onChange={handleChange}
-            className="border p-2 rounded uppercase"
+            className="border p-3 rounded uppercase outline-none"
           />
 
           <input
@@ -86,10 +112,10 @@ const SignUpPage = ({ setShowSignupPage, setShowLoginPage }) => {
             placeholder="PAN Number"
             value={form.pan}
             onChange={handleChange}
-            className="border p-2 rounded uppercase"
+            className="border p-3 rounded uppercase outline-none"
           />
 
-          <label className="flex gap-2 text-sm">
+          <label className="flex gap-2 text-sm items-center">
             <input
               type="checkbox"
               name="agreement"
@@ -99,20 +125,20 @@ const SignUpPage = ({ setShowSignupPage, setShowLoginPage }) => {
             I agree to Terms & Policies
           </label>
 
-          <button className="bg-primary text-white p-2 rounded">
+          <button
+            type="submit"
+            className="bg-primary text-white p-3 rounded font-medium"
+          >
             Submit for Approval
           </button>
         </form>
 
-        {/* FOOTER */}
-        <p className="text-sm mt-4">
+        {/* 🔹 FOOTER */}
+        <p className="text-sm mt-5 text-center">
           Already approved?{" "}
           <span
-            onClick={() => {
-              setShowSignupPage(false);
-              setShowLoginPage(true);
-            }}
-            className="text-primary cursor-pointer"
+            onClick={goToLogin}
+            className="text-primary cursor-pointer font-medium"
           >
             Login
           </span>
@@ -123,8 +149,8 @@ const SignUpPage = ({ setShowSignupPage, setShowLoginPage }) => {
 };
 
 SignUpPage.propTypes = {
-  setShowSignupPage: PropTypes.func.isRequired,
-  setShowLoginPage: PropTypes.func.isRequired,
+  setShowSignupPage: PropTypes.func,
+  setShowLoginPage: PropTypes.func,
 };
 
 export default SignUpPage;
