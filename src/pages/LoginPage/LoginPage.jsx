@@ -1,121 +1,156 @@
 import { useState } from "react";
 import { Spinner, useToast } from "@chakra-ui/react";
-import { ImCross } from "react-icons/im";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+
 
 const LoginPage = () => {
-  const [loginDetails, setLoginDetails] = useState({
-    mobile: "",
-  });
+  const [mobile, setMobile] = useState("");
   const [loading, setLoading] = useState(false);
-
   const toast = useToast();
   const navigate = useNavigate();
-
-  /* ================= HANDLERS ================= */
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (loginDetails.mobile.length !== 10) {
+    if (mobile.length !== 10) {
       toast({
         title: "Invalid mobile number",
-        description: "Please enter a valid 10-digit mobile number",
         status: "error",
-        duration: 4000,
-        isClosable: true,
+        duration: 3000,
       });
       return;
     }
 
     setLoading(true);
-
     setTimeout(() => {
       setLoading(false);
       toast({
         title: "OTP Sent",
-        description: `OTP sent to ${loginDetails.mobile}`,
+        description: `OTP sent to +91 ${mobile}`,
         status: "success",
-        duration: 4000,
-        isClosable: true,
+        duration: 3000,
       });
-
-      // 🔥 after OTP sent (optional)
-      // navigate("/orders");
     }, 1200);
+    setTimeout(() => {
+  setLoading(false);
+  navigate("/otp", { state: { mobile } });
+}, 1200);
   };
-
-  const goToSignup = () => {
-    navigate("/signup");
-  };
-
-  const goBack = () => {
-    navigate(-1); // back
-  };
-
-  /* ================= UI ================= */
 
   return (
-    <main className="bg-black/90 fixed inset-0 flex justify-center items-center z-50">
-      <div className="bg-white flex flex-col p-6 rounded-lg w-1/3 max-[500px]:w-[90%]">
+    <main className="min-h-screen grid grid-cols-1 md:grid-cols-[4fr_1fr]">
 
-        {/* HEADER */}
-        <header className="flex justify-between items-center mb-6">
-          <span className="text-2xl font-medium text-gray-700">
-            Login with Mobile
-          </span>
+    <motion.section
+  initial={{ y: -80, opacity: 0 }}
+  animate={{ y: 0, opacity: 1 }}
+  transition={{ duration: 0.7, ease: "easeOut" }}
+  className="relative flex items-center justify-center px-6 py-24
+             bg-[url('https://t4.ftcdn.net/jpg/01/49/30/53/240_F_149305346_Baj4gSO2q9b0dQzZ53cdTksOXC2nQhyR.jpg')] 
+             bg-cover bg-center"
+>
+  {/* DARK OVERLAY */}
+  <div className="absolute inset-0 bg-black/55" />
 
-          <ImCross
-            onClick={() => {
-              navigate('/');
-            }}
-            className="cursor-pointer text-black"
-          />
-        </header>
+  {/* CONTENT */}
+  <div className="relative z-10 text-center text-white">
+    <h1 className="text-4xl md:text-5xl font-serif tracking-wide mb-4">
+      SR Chains
+    </h1>
 
-        {/* FORM */}
-        <form
-          onSubmit={handleSubmit}
-          className="flex flex-col gap-4 pb-6 mb-4 border-b"
-        >
-          <input
-            type="tel"
-            name="mobile"
-            required
-            placeholder="Enter Mobile Number"
-            maxLength={10}
-            value={loginDetails.mobile}
-            onChange={(e) =>
-              setLoginDetails({
-                mobile: e.target.value.replace(/[^0-9]/g, ""),
-              })
-            }
-            className="outline-none border rounded-lg p-3 text-gray-700"
-          />
+    <p className="text-lg md:text-xl max-w-md mx-auto">
+      Discover Elegant Silver Jewellery <br />
+      for Every Occasion
+    </p>
+  </div>
+</motion.section>
 
-          <button
-            type="submit"
-            className="bg-primary text-white p-3 rounded-lg font-medium flex justify-center"
+
+
+      {/* FORM */}
+      <motion.section
+        initial={{ y: 40, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.6, delay: 0.2 }}
+        className="flex justify-center items-center px-6 py-10"
+      >
+        <div className="w-full max-w-md">
+
+          <h2 className="text-2xl font-semibold mb-6">
+            Log in
+          </h2>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+
+            {/* MOBILE INPUT */}
+            <motion.div
+              whileFocus={{ scale: 1.02 }}
+              className="flex border rounded-lg overflow-hidden"
+            >
+              <div className="flex items-center px-3 border-r text-sm">
+                🇮🇳 +91
+              </div>
+              <input
+                type="tel"
+                placeholder="Enter phone number"
+                maxLength={10}
+                value={mobile}
+                onChange={(e) =>
+                  setMobile(e.target.value.replace(/[^0-9]/g, ""))
+                }
+                className="flex-1 p-3 outline-none"
+              />
+            </motion.div>
+
+            {/* REMEMBER */}
+            <motion.label
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4 }}
+              className="flex items-center gap-2 text-sm text-gray-600"
+            >
+              <input type="checkbox" defaultChecked />
+              Remember my login for faster sign-in
+            </motion.label>
+
+            {/* CONTINUE */}
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.97 }}
+              type="submit"
+              className="w-full bg-red-500 text-white py-3 rounded-lg font-medium"
+            >
+              {loading ? <Spinner size="sm" /> : "Continue"}
+            </motion.button>
+
+            <motion.button
+              whileHover={{ opacity: 0.7 }}
+              type="button"
+              onClick={() => navigate("/signup")}
+            >
+              <span className="text-sm">
+                Don't have an account? Sign up
+              </span>
+            </motion.button>
+
+          </form>
+
+          {/* TERMS */}
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6 }}
+            className="text-xs text-center text-gray-500 mt-6"
           >
-            {loading ? <Spinner size="sm" /> : "Send OTP"}
-          </button>
-        </form>
+            By continuing, you agree to our{" "}
+            <span className="underline">Terms of Service</span>,{" "}
+            <span className="underline">Privacy Policy</span> and{" "}
+            <span className="underline">Content Policy</span>
+          </motion.p>
 
-        {/* FOOTER */}
-        <p className="text-sm text-gray-600 text-center">
-          You will receive an OTP on your mobile number
-        </p>
+        </div>
+      </motion.section>
 
-        <p className="text-sm text-center mt-3">
-          New user?{" "}
-          <span
-            onClick={goToSignup}
-            className="text-blue-600 cursor-pointer font-medium"
-          >
-            Sign up
-          </span>
-        </p>
-      </div>
     </main>
   );
 };

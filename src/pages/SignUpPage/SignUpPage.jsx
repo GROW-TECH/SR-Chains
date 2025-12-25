@@ -1,156 +1,163 @@
 import { useState } from "react";
-import PropTypes from "prop-types";
-import { ImCross } from "react-icons/im";
+import { Spinner, useToast } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
-const SignUpPage = ({ setShowSignupPage, setShowLoginPage }) => {
-  const navigate = useNavigate();
-
+const SignupPage = () => {
   const [form, setForm] = useState({
-    name: "",
-    mobile: "",
     gst: "",
     pan: "",
-    agreement: false,
+    mobile: "",
   });
-
-  /* ================= HANDLERS ================= */
-
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-
-    setForm({
-      ...form,
-      [name]: type === "checkbox" ? checked : value,
-    });
-  };
+  const [loading, setLoading] = useState(false);
+  const toast = useToast();
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (
-      !form.name ||
-      form.mobile.length !== 10 ||
-      !form.gst ||
-      !form.pan ||
-      !form.agreement
-    ) {
-      alert("Please fill all details correctly");
+    if (form.mobile.length !== 10) {
+      toast({ title: "Invalid mobile number", status: "error" });
+      return;
+    }
+    if (form.gst.length !== 15) {
+      toast({ title: "Invalid GST number", status: "error" });
+      return;
+    }
+    if (form.pan.length !== 10) {
+      toast({ title: "Invalid PAN number", status: "error" });
       return;
     }
 
-    // 🔥 Send to backend (status = PENDING)
-    console.log("Signup data (Pending Approval):", form);
-
-    alert("Signup submitted. Waiting for admin approval.");
-
-    // close modal if exists
-    if (setShowSignupPage) setShowSignupPage(false);
-
-    // optional: redirect after submit
-    navigate("/");
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      toast({
+        title: "OTP Sent",
+        description: "Verify OTP to complete registration",
+        status: "success",
+      });
+    }, 1200);
   };
-
-  const goToLogin = () => {
-    if (setShowSignupPage) setShowSignupPage(false);
-    if (setShowLoginPage) {
-      setShowLoginPage(true); // modal-based login
-    } else {
-      navigate("/login"); // route-based login
-    }
-  };
-
-  /* ================= UI ================= */
 
   return (
-    <main className="bg-black/90 fixed inset-0 flex justify-center items-center z-50">
-      <div className="bg-white p-6 rounded-lg w-1/2 max-[500px]:w-[90%]">
-        {/* 🔹 HEADER */}
-        <header className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-medium text-gray-700">Create Account</h2>
+    <main className="min-h-screen grid grid-cols-1 md:grid-cols-[3fr_1fr]">
 
-          <ImCross
-            className="cursor-pointer text-black"
-            onClick={() => setShowSignupPage && setShowSignupPage(false)}
-          />
-        </header>
+    <motion.section
+  initial={{ y: -80, opacity: 0 }}
+  animate={{ y: 0, opacity: 1 }}
+  transition={{ duration: 0.7, ease: "easeOut" }}
+  className="relative flex items-center justify-center px-6 py-20
+             bg-[url('https://t4.ftcdn.net/jpg/01/49/30/53/240_F_149305346_Baj4gSO2q9b0dQzZ53cdTksOXC2nQhyR.jpg')] bg-cover bg-center"
+>
+  {/* DARK OVERLAY */}
+  <div className="absolute inset-0 bg-black/60" />
 
-        {/* 🔹 FORM */}
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <input
-            name="name"
-            placeholder="Business Name"
-            value={form.name}
-            onChange={handleChange}
-            className="border p-3 rounded outline-none"
-          />
+  {/* CONTENT */}
+  <div className="relative z-10 text-center text-white">
+    <h1 className="text-4xl md:text-5xl font-serif tracking-wide mb-4">
+      SR Chains
+    </h1>
 
-          <input
-            name="mobile"
-            placeholder="Mobile Number"
-            maxLength={10}
-            value={form.mobile}
-            onChange={(e) =>
-              setForm({
-                ...form,
-                mobile: e.target.value.replace(/[^0-9]/g, ""),
-              })
-            }
-            className="border p-3 rounded outline-none"
-          />
+    <p className="text-lg md:text-xl max-w-md mx-auto">
+      Discover Elegant Silver Jewellery for <br /> Every Occasion
+    </p>
+  </div>
+</motion.section>
 
-          <input
-            name="gst"
-            placeholder="GST Number"
-            value={form.gst}
-            onChange={handleChange}
-            className="border p-3 rounded uppercase outline-none"
-          />
+      {/* FORM */}
+      <motion.section
+        initial={{ y: 40, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.6, delay: 0.2 }}
+        className="flex justify-center items-center px-6 py-10"
+      >
+        <div className="w-full max-w-md">
 
-          <input
-            name="pan"
-            placeholder="PAN Number"
-            value={form.pan}
-            onChange={handleChange}
-            className="border p-3 rounded uppercase outline-none"
-          />
+          <h2 className="text-2xl font-semibold mb-6">
+            Create your account
+          </h2>
 
-          <label className="flex gap-2 text-sm items-center">
-            <input
-              type="checkbox"
-              name="agreement"
-              checked={form.agreement}
-              onChange={handleChange}
+          <form onSubmit={handleSubmit} className="space-y-4">
+
+            <motion.input
+              whileFocus={{ scale: 1.02 }}
+              type="text"
+              placeholder="GST Number"
+              maxLength={15}
+              value={form.gst}
+              onChange={(e) =>
+                setForm({ ...form, gst: e.target.value.toUpperCase() })
+              }
+              className="w-full border p-3 rounded-lg outline-none"
             />
-            I agree to Terms & Policies
-          </label>
 
-          <button
-            type="submit"
-            className="bg-primary text-white p-3 rounded font-medium"
-          >
-            Submit for Approval
-          </button>
-        </form>
+            <motion.input
+              whileFocus={{ scale: 1.02 }}
+              type="text"
+              placeholder="PAN Number"
+              maxLength={10}
+              value={form.pan}
+              onChange={(e) =>
+                setForm({ ...form, pan: e.target.value.toUpperCase() })
+              }
+              className="w-full border p-3 rounded-lg outline-none"
+            />
 
-        {/* 🔹 FOOTER */}
-        <p className="text-sm mt-5 text-center">
-          Already approved?{" "}
-          <span
-            onClick={goToLogin}
-            className="text-primary cursor-pointer font-medium"
-          >
-            Login
-          </span>
-        </p>
-      </div>
+            <motion.div
+              whileFocus={{ scale: 1.02 }}
+              className="flex border rounded-lg overflow-hidden"
+            >
+              <div className="flex items-center px-3 border-r text-sm">
+                🇮🇳 +91
+              </div>
+              <input
+                type="tel"
+                placeholder="Mobile Number"
+                maxLength={10}
+                value={form.mobile}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    mobile: e.target.value.replace(/[^0-9]/g, ""),
+                  })
+                }
+                className="flex-1 p-3 outline-none"
+              />
+            </motion.div>
+
+            {/* SUBMIT */}
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.97 }}
+              type="submit"
+              className="w-full bg-red-500 text-white py-3 rounded-lg font-medium"
+            >
+              {loading ? <Spinner size="sm" /> : "Send OTP"}
+            </motion.button>
+
+            <motion.button
+              whileHover={{ opacity: 0.7 }}
+              type="button"
+              onClick={() => navigate("/login")}
+            >
+              <span className="text-sm">
+                Already have an account? Log in
+              </span>
+            </motion.button>
+          </form>
+
+          <p className="text-sm text-gray-600 text-center mt-4">
+            After OTP verification, your account will be
+            <br />
+            <strong>pending admin approval</strong>
+          </p>
+
+        </div>
+      </motion.section>
+
     </main>
   );
 };
 
-SignUpPage.propTypes = {
-  setShowSignupPage: PropTypes.func,
-  setShowLoginPage: PropTypes.func,
-};
-
-export default SignUpPage;
+export default SignupPage;

@@ -9,6 +9,8 @@ import KTReadyPage from "./pages/KTReadyPage";
 import ProductDetails from "./pages/ProductDetails";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
+import OtpPage from "./pages/LoginPage/OtpPage";
+import OnboardingPage from "./pages/OnboardingPage";
 
 const App = () => {
   return (
@@ -17,6 +19,8 @@ const App = () => {
         <Route path="/" element={<HomePage />} />
         <Route path="/categories" element={<ShopByCategory />} />
         <Route path="/22kt-ready" element={<KTReadyPage />} />
+        <Route path="/otp" element={<OtpPage />} />
+<Route path="/onboarding" element={<OnboardingPage />} />
 
         <Route
           path="/collection/:category/:subCategory/:page"

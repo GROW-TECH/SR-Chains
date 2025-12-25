@@ -1,158 +1,175 @@
 import { useNavigate } from "react-router-dom";
-// import Header from "./Header"; // Add this import
-// import SecondaryHeader from "../components/SecondaryHeader";
+import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
 import Footer from "../components/Footer";
 import SearchBar from "../components/SearchBar";
-import CategoryCard from "../components/CategoryCard";
-import CollectionCard from "../components/CollectionCard";
-import Category from "../components/CategoryFilter";
+import FilterSheet from "../components/FilterSheet";
 
-/* ================= CATEGORIES DATA ================= */
-const categoriesData = [
-  {
-    id: "rings",
-    title: "Silver Rings",
-    desc: "Elegant handcrafted silver rings",
-    img: "https://cdnmedia-breeze.vaibhavjewellers.com/media/catalog/product/cache/30d09bf8af51e4fea389519968dfdb4b/image/218766e4f/beautiful-design-silver-kada-for-baby-boy-563va8195-563va8195.jpg",
-    slug: "silver-rings",
-  },
-  {
-    id: "necklaces",
-    title: "Silver Necklaces",
-    desc: "Timeless designs for every look",
-    img: "https://cdnmedia-breeze.vaibhavjewellers.com/media/catalog/product/cache/30d09bf8af51e4fea389519968dfdb4b/image/22399cc11/graceful-bridal-silver-haram-set-208vt1608-208vt1608-208vs5820.jpg",
-    slug: "silver-necklaces",
-  },
-  {
-    id: "bangles",
-    title: "Silver Bangles",
-    desc: "Traditional & modern styles",
-    img: "https://aurajewels.s3.amazonaws.com/images/AuraJewels/silbrc021p",
-    slug: "silver-bangles",
-  },
-  {
-    id: "anklets",
-    title: "Silver Anklets",
-    desc: "Delicate silver anklets for daily wear",
-    img: "https://cdnmedia-breeze.vaibhavjewellers.com/media/catalog/product/cache/30d09bf8af51e4fea389519968dfdb4b/image/1517226c6/sterling-silver-men-s-party-wear-bracelet-208vo5368-208vo5368.jpg",
-    slug: "silver-anklets",
-  },
-  {
-    id: "earrings",
-    title: "Silver Earrings",
-    desc: "Classic and contemporary designs",
-    img: "https://cdnmedia-breeze.vaibhavjewellers.com/media/catalog/product/cache/30d09bf8af51e4fea389519968dfdb4b/image/13551e210/92-5-sterling-silver-antique-drop-dangle-jhumkas-208vo8339-208vo8339.jpg",
-    slug: "silver-earrings",
-  },
-  {
-    id: "bracelets",
-    title: "Silver Bracelets",
-    desc: "Modern silver bracelets for every style",
-    img: "https://www.giva.co/cdn/shop/files/BR0221_1.jpg?v=1694080362&width=713",
-    slug: "silver-bracelets",
-  },
+/* ================= DATA ================= */
+
+const categories = [
+  { name: "All", img: "https://cdn-icons-png.flaticon.com/512/869/869636.png" },
+  { name: "Anklets", img: "https://cdn-icons-png.flaticon.com/512/869/869636.png" },
+  { name: "Rings", img: "https://cdn-icons-png.flaticon.com/512/2922/2922037.png" },
+  { name: "Chains", img: "https://cdn-icons-png.flaticon.com/512/3468/3468371.png" },
+  { name: "Bangles", img: "https://cdn-icons-png.flaticon.com/512/869/869636.png" },
+  { name: "Bracelets", img: "https://cdn-icons-png.flaticon.com/512/2922/2922037.png" },
 ];
 
-/* ================= COLLECTIONS DATA ================= */
-const collectionsData = [
-  {
-    id: 1,
-    title: "Wedding Collection",
-    desc: "Graceful silver jewellery for timeless weddings",
-    img: "https://cdnmedia-breeze.vaibhavjewellers.com/media/webp_image/catalog/product/cache/1bdefe94714fcd7dcc850ab66b8f5472/image/270327763/celestial-flower-silver-necklace-set-with-blue-stones-6176mhoca22988.webp",
-    slug: "wedding-collection",
-  },
-  {
-    id: 2,
-    title: "Everyday Elegance",
-    desc: "Minimal silver pieces for daily wear",
-    img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSd0rOW_JdejNfVItD7MW6w5eirT7QDH-BATzbP_FtTVcIpcfHdDN81Re4&s",
-    slug: "everyday-elegance",
-  },
-  {
-    id: 3,
-    title: "Festive Specials",
-    desc: "Statement silver designs for celebrations",
-    img: "https://static.vecteezy.com/system/resources/thumbnails/027/062/824/small_2x/silver-necklace-on-a-solid-color-background-in-close-up-ai-generative-photo.jpeg",
-    slug: "festive-specials",
-  },
+const exploreMore = [
+  { title: "Ready Stock", subtitle: "Dispatch Today", img: "https://cdn-icons-png.flaticon.com/512/891/891462.png" },
+  { title: "Bulk Orders", subtitle: "Wholesale Rates", img: "https://cdn-icons-png.flaticon.com/512/2933/2933894.png" },
+  { title: "New Designs", subtitle: "Latest Arrivals", img: "https://cdn-icons-png.flaticon.com/512/1828/1828884.png" },
+  { title: "Top Rated", subtitle: "High Demand", img: "https://cdn-icons-png.flaticon.com/512/616/616489.png" },
 ];
+
+const homeProducts = [
+  { id: 1, name: "Classic Silver Anklet", category: "Anklets", price: 4500, rating: 4.5, stock: "ready", size: "baby", weight: 18.5, purity: "92.5%", img:  "https://digitaldressroom.com/cdn/shop/products/14NAVP50...jpg?v=1734463547&width=823" },
+  { id: 2, name: "Traditional Silver Bangle", category: "Bangles", price: 6800, rating: 4.0, stock: "order", size: "adult", weight: 32.8, purity: "92.5%", img: "https://digitaldressroom.com/cdn/shop/files/Photo16-04-24_122805PM_3aa89b91-f094-4ed1-9cce-9be301b82251.jpg?v=1734462383" },
+  { id: 3, name: "Minimal Silver Ring", category: "Rings", price: 2200, rating: 4.8, stock: "ready", size: "baby", weight: 32.8, purity: "92.5%", img: "https://shop.southindiajewels.com/wp-content/uploads/2023/09/Beautiful-German-Silver-Anklet.jpg" },
+  { id: 4, name: "Elegant Silver Chain", category: "Chains", price: 7500, rating: 3.9, stock: "order", size: "adult", weight: 32.8, purity: "92.5%", img: "https://silvermerc.com/cdn/shop/products/DSC_3916_2.jpg?v=1672488690" },
+];
+
+const CARD_WIDTH = 176;
+
+/* ================= HOME ================= */
 
 const HomePage = () => {
   const navigate = useNavigate();
 
+  const [activeCategory, setActiveCategory] = useState("All");
+  const [showFilter, setShowFilter] = useState(false);
+
+  const [index, setIndex] = useState(0);
+
+  const [sortBy, setSortBy] = useState("latest");
+  const [stockFilter, setStockFilter] = useState(null);
+  const [minRating, setMinRating] = useState(null);
+  const [categoryFilter, setCategoryFilter] = useState(null);
+  const [sizeFilter, setSizeFilter] = useState(null);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setIndex((prev) => (prev + 1) % exploreMore.length);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, []);
+
+  let products = [...homeProducts];
+
+  if (activeCategory !== "All") products = products.filter(p => p.category === activeCategory);
+  if (stockFilter) products = products.filter(p => p.stock === stockFilter);
+  if (categoryFilter) products = products.filter(p => p.category === categoryFilter);
+  if (sizeFilter) products = products.filter(p => p.size === sizeFilter);
+  if (minRating) products = products.filter(p => p.rating >= minRating);
+
+  if (sortBy === "price_asc") products.sort((a, b) => a.price - b.price);
+  if (sortBy === "price_desc") products.sort((a, b) => b.price - a.price);
+  if (sortBy === "latest") products.sort((a, b) => b.id - a.id);
+  if (sortBy === "top") products.sort((a, b) => b.rating - a.rating);
+  if (sortBy === "ready") products.sort((a, b) => (a.stock === "ready" ? -1 : 1));
+
   return (
-    <>
-      <div
-        className="relative min-h-[80vh] flex flex-col items-center justify-center bg-cover bg-center text-white"
-        style={{
-          backgroundImage:
-            "url('https://t4.ftcdn.net/jpg/01/49/30/53/240_F_149305346_Baj4gSO2q9b0dQzZ53cdTksOXC2nQhyR.jpg')",
-        }}
-      >
-        <div className="absolute inset-0 bg-black/60" />
+    <div className="bg-[#F2F2F0] min-h-screen text-[#30302F]">
 
-        <div className="relative z-10 w-full flex flex-col items-center px-6">
-          <h1 className="text-5xl md:text-6xl font-serif tracking-widest mt-10 text-center">
-            SR Chains
-          </h1>
-
-          <p className="text-xl md:text-3xl text-center mt-4 max-w-3xl">
-            Discover Elegant Silver Jewellery for Every Occasion
-          </p>
-
-          <div className="w-full max-w-3xl mt-8">
-            <SearchBar placeholder="Search rings, necklaces, bangles..." />
-          </div>
+      {/* HEADER */}
+      <header className="px-4 py-3 flex justify-between bg-white sticky top-0 z-30">
+        <h2 className="font-semibold">SR Chains</h2>
+        <div className="w-9 h-9 rounded-full bg-[#30302F] text-white flex items-center justify-center">
+          N
         </div>
+      </header>
+
+      {/* SEARCH */}
+      <div className="px-4 mt-3">
+        <SearchBar placeholder="Search silver jewellery..." />
       </div>
-      {/* ================= SHOP BY CATEGORY ================= */}
-      <section className="px-6 md:px-20 pt-16 pb-20 bg-[#FFF7F7]">
-        <h2 className="text-4xl text-center mb-12 text-[#7A4A4A]">
-          Shop by Category
-        </h2>
-        <Category />
-      </section>
-      {/* ================= CATEGORY CARDS ================= */}
-      <section className="px-6 md:px-20 py-20 bg-gray-50">
-        <h2 className="text-4xl text-center mb-12 font-medium">
-          Popular Categories
-        </h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-1 gap-10 max-w-6xl mx-auto">
-          {categoriesData.map((cat) => (
-            <CategoryCard
-              key={cat.id}
-              title={cat.title}
-              desc={cat.desc}
-              img={cat.img}
-              onClick={() =>
-                navigate("/categories", { state: { category: cat.slug } })
-              }
-            />
-          ))}
-        </div>
-      </section>
-      {/* ================= COLLECTIONS ================= */}
-      <section className="px-6 md:px-20 py-20 bg-gray-50">
-        <h2 className="text-4xl text-center mb-12">
-          Featured Silver Collections
-        </h2>
+      {/* CATEGORIES */}
+      <div className="flex justify-between px-4 mt-6">
+        {categories.map((c) => (
+          <div key={c.name} onClick={() => setActiveCategory(c.name)} className="text-center cursor-pointer">
+            <div className={`w-11 h-11 rounded-full border flex items-center justify-center ${activeCategory === c.name ? "border-[#30302F]" : "border-[#D1D1CF]"}`}>
+              <img src={c.img} className="w-6" alt={c.name} />
+            </div>
+            <p className="text-xs mt-1">{c.name}</p>
+          </div>
+        ))}
+      </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {collectionsData.map((col) => (
-            <CollectionCard
-              key={col.id}
-              title={col.title}
-              desc={col.desc}
-              img={col.img}
-              onClick={() => navigate(`./categories`)}
-            />
-          ))}
-        </div>
+      {/* EXPLORE */}
+      {activeCategory === "All" && (
+        <section className="mt-6 px-4">
+          <p className="text-sm text-[#7B7B7A] mb-2">EXPLORE NOW</p>
+
+          <div className="overflow-hidden">
+            <motion.div
+              className="flex gap-4"
+              animate={{ x: `-${index * CARD_WIDTH}px` }}
+              transition={{ duration: 0.6 }}
+            >
+              {exploreMore.map((e) => (
+                <div key={e.title} className="min-w-[160px] bg-white border rounded-xl p-4 text-center">
+                  <img src={e.img} className="w-12 mx-auto mb-2" alt={e.title} />
+                  <p className="text-sm font-semibold">{e.title}</p>
+                  <p className="text-xs text-gray-500">{e.subtitle}</p>
+                </div>
+              ))}
+            </motion.div>
+          </div>
+
+          <button
+            onClick={() => setShowFilter(true)}
+            className="mt-4 px-4 py-2 border rounded-full bg-white text-sm"
+          >
+            Filter & Sort
+          </button>
+        </section>
+      )}
+
+      {/* FILTER SHEET */}
+      <FilterSheet
+        open={showFilter}
+        onClose={() => setShowFilter(false)}
+        categories={categories}
+        sortBy={sortBy}
+        setSortBy={setSortBy}
+        stockFilter={stockFilter}
+        setStockFilter={setStockFilter}
+        minRating={minRating}
+        setMinRating={setMinRating}
+        categoryFilter={categoryFilter}
+        setCategoryFilter={setCategoryFilter}
+        sizeFilter={sizeFilter}
+        setSizeFilter={setSizeFilter}
+        clearHomeCategory={() => setActiveCategory("All")}
+      />
+
+      {/* PRODUCTS */}
+      <section className="mt-8 px-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 pb-24">
+        {products.map((p) => (
+          <div key={p.id} className="bg-white border rounded-xl p-3 cursor-pointer" onClick={() => navigate(`/product/${p.id}`)}>
+            <img src={p.img} className="h-40 w-full object-cover rounded mb-2" alt={p.name} />
+            <p className="text-sm font-medium">{p.name}</p>
+            <p className="text-xs text-gray-500">{p.category}</p>
+
+            <div className="flex justify-between text-xs mt-1">
+              <span>Wt: {p.weight}g</span>
+              <span>Purity: {p.purity}</span>
+            </div>
+
+            <div className="flex justify-between items-center mt-2">
+              <p className="text-sm font-semibold">₹{p.price.toLocaleString()}</p>
+              <span className="text-[10px] px-2 py-1 rounded-full bg-gray-100 border">
+                {p.size === "baby" ? "Baby" : "Adult"}
+              </span>
+            </div>
+          </div>
+        ))}
       </section>
+
       <Footer />
-    </>
+    </div>
   );
 };
 
