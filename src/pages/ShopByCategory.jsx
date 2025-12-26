@@ -14,7 +14,7 @@ const ShopByCategory = () => {
 
   /* FILTER STATES */
   const [sortBy, setSortBy] = useState("latest");
-  const [categoryFilter, setCategoryFilter] = useState(null);
+  const [categoryFilter, setCategoryFilter] = useState(null); // GROUP NAME
 
   /* LOAD DATA */
   useEffect(() => {
@@ -36,7 +36,7 @@ const ShopByCategory = () => {
     ([groupName, items]) =>
       items.map((item) => ({
         ...item,
-        group: groupName, // VERY IMPORTANT
+        group: groupName, // KEEP ORIGINAL GROUP NAME
       }))
   );
 
@@ -44,8 +44,8 @@ const ShopByCategory = () => {
   let filteredCategories = [...flatCategories];
 
   if (categoryFilter) {
-    filteredCategories = filteredCategories.filter((item) =>
-      item.group.toLowerCase().includes(categoryFilter.toLowerCase())
+    filteredCategories = filteredCategories.filter(
+      (item) => item.group === categoryFilter
     );
   }
 
@@ -60,10 +60,11 @@ const ShopByCategory = () => {
     filteredCategories.reverse();
   }
 
+  /* LOADING */
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#b46b74]" />
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#30302F]" />
       </div>
     );
   }
@@ -88,10 +89,8 @@ const ShopByCategory = () => {
         <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {filteredCategories.map((item, index) => (
             <div
-              key={index}
-              onClick={() =>
-                navigate(`/collection/${item.slug}`)
-              }
+              key={`${item.slug}-${index}`}
+              onClick={() => navigate(`/collection/${item.slug}`)}
               className="cursor-pointer"
             >
               <CategoryCard

@@ -5,11 +5,7 @@ const Option = ({ label, onClick, active }) => (
   <button
     onClick={onClick}
     className={`w-full border rounded-xl p-3 text-sm mb-2 transition-colors
-      ${
-        active
-          ? "bg-[#30302F] text-white"
-          : "bg-white border-[#D1D1CF] hover:bg-gray-50"
-      }`}
+      ${active ? "bg-[#30302F] text-white" : "bg-white border-[#D1D1CF] hover:bg-gray-50"}`}
   >
     {label}
   </button>
@@ -66,11 +62,7 @@ const FilterSheet = ({
                     key={k}
                     onClick={() => setTab(k)}
                     className={`w-full px-4 py-3 text-left border-l-4 text-sm
-                      ${
-                        tab === k
-                          ? "border-[#30302F] bg-white font-semibold"
-                          : "border-transparent text-[#7B7B7A]"
-                      }`}
+                      ${tab === k ? "border-[#30302F] bg-white font-semibold" : "border-transparent text-[#7B7B7A]"}`}
                   >
                     {k.toUpperCase()}
                   </button>
@@ -87,14 +79,50 @@ const FilterSheet = ({
                   </>
                 )}
 
-                {/* CATEGORY (STATIC — IMPORTANT FIX) */}
+                {/* CATEGORY – SILVER ONLY */}
                 {tab === "category" && (
                   <>
-                    <Option label="Gold" active={categoryFilter === "gold"} onClick={() => setCategoryFilter("gold")} />
-                    <Option label="Silver" active={categoryFilter === "silver"} onClick={() => setCategoryFilter("silver")} />
-                    <Option label="22KT" active={categoryFilter === "22kt"} onClick={() => setCategoryFilter("22kt")} />
-                    <Option label="18KT" active={categoryFilter === "18kt"} onClick={() => setCategoryFilter("18kt")} />
-                    <Option label="All" active={!categoryFilter} onClick={() => setCategoryFilter(null)} />
+                    <Option
+                      label="Ladies Chains"
+                      active={categoryFilter === "ladies_chains"}
+                      onClick={() => setCategoryFilter("ladies_chains")}
+                    />
+
+                    <Option
+                      label="Boys Chains"
+                      active={categoryFilter === "boys_chains"}
+                      onClick={() => setCategoryFilter("boys_chains")}
+                    />
+
+                    <Option
+                      label="Anklets"
+                      active={categoryFilter === "anklets"}
+                      onClick={() => setCategoryFilter("anklets")}
+                    />
+
+                    <Option
+                      label="70 Tachu"
+                      active={categoryFilter === "70t"}
+                      onClick={() => setCategoryFilter("70t")}
+                    />
+
+                    <Option
+                      label="80 Tachu"
+                      active={categoryFilter === "80t"}
+                      onClick={() => setCategoryFilter("80t")}
+                    />
+
+                    <Option
+                      label="92.5 Silver"
+                      active={categoryFilter === "92.5"}
+                      onClick={() => setCategoryFilter("92.5")}
+                    />
+
+                    <Option
+                      label="All"
+                      active={!categoryFilter}
+                      onClick={() => setCategoryFilter(null)}
+                    />
                   </>
                 )}
 

@@ -1,31 +1,36 @@
 export const productsData = {
-  "wedding-collection": [
+  chains: [
     {
       id: 1,
-      name: "Silver Bridal Necklace",
-      price: 12500,
-      img: "https://cdnmedia-breeze.vaibhavjewellers.com/media/webp_image/catalog/product/cache/1bdefe94714fcd7dcc850ab66b8f5472/image/270327763/celestial-flower-silver-necklace-set-with-blue-stones.webp",
-    },
-    {
-      id: 2,
-      name: "Antique Silver Haram",
-      price: 18200,
-      img: "https://cdnmedia-breeze.vaibhavjewellers.com/media/catalog/product/cache/30d09bf8af51e4fea389519968dfdb4b/image/22399cc11/graceful-bridal-silver-haram-set.jpg",
-    },
+      designNo: "SR-1023",
+      name: "Silver Rope Chain",
+      category: "Chains",
+      variant: "A",
+      sizeRange: '4" – 12.5"',
+      weightPerInch: 8.5, // grams
+      wastage: 6, // %
+      makingCharge: 1200, // per kg
+      images: [
+        "https://silvermerc.com/cdn/shop/products/DSC_3916_2.jpg",
+        "https://www.giva.co/cdn/shop/files/BR0221_1.jpg"
+      ]
+    }
   ],
 
-  "everyday-elegance": [
+  anklets: [
     {
-      id: 3,
-      name: "Minimal Silver Chain",
-      price: 3200,
-      img: "https://www.giva.co/cdn/shop/files/BR0221_1.jpg?v=1694080362",
-    },
-    {
-      id: 4,
-      name: "Daily Wear Silver Bracelet",
-      price: 4100,
-      img: "https://cdnmedia-breeze.vaibhavjewellers.com/media/catalog/product/cache/30d09bf8af51e4fea389519968dfdb4b/image/1517226c6/sterling-silver-men-s-party-wear-bracelet.jpg",
-    },
-  ],
+      id: 2,
+      designNo: "SR-2045",
+      name: "92.5 Silver Anklet",
+      category: "Anklets",
+      variant: "B",
+      sizeRange: '6" – 10"',
+      weightPerInch: 6.2,
+      wastage: 5,
+      makingCharge: 950,
+      images: [
+        "https://shop.southindiajewels.com/wp-content/uploads/2023/09/Beautiful-German-Silver-Anklet.jpg"
+      ]
+    }
+  ]
 };

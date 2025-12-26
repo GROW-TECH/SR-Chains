@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@chakra-ui/react";
@@ -17,6 +17,14 @@ const OnboardingPage = () => {
     "Bracelets",
     "Bulk / Wholesale Orders",
   ];
+
+  // 🔒 GUARD
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("sr_user"));
+
+    if (!user) navigate("/login");
+    if (user && user.isNew === false) navigate("/");
+  }, []);
 
   const togglePreference = (item) => {
     setPreferences((prev) =>
@@ -37,13 +45,22 @@ const OnboardingPage = () => {
       return;
     }
 
+    const user = JSON.parse(localStorage.getItem("sr_user"));
+
+    const updatedUser = {
+      ...user,
+      name,
+      preferences,
+      isNew: false, // ✅ onboarding completed
+    };
+
+    localStorage.setItem("sr_user", JSON.stringify(updatedUser));
 
     navigate("/");
   };
 
   return (
     <main className="min-h-screen flex justify-center items-center px-6">
-
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
@@ -53,11 +70,11 @@ const OnboardingPage = () => {
         <h2 className="text-2xl font-semibold mb-2">
           Tell us about yourself
         </h2>
+
         <p className="text-gray-600 mb-6">
           This helps us personalize your silver catalog
         </p>
 
-        {/* NAME */}
         <input
           type="text"
           placeholder="Full Name"
@@ -66,7 +83,6 @@ const OnboardingPage = () => {
           className="w-full border p-3 rounded-lg mb-6"
         />
 
-        {/* PREFERENCES */}
         <p className="text-sm font-medium mb-3">
           Interested Products
         </p>
@@ -88,7 +104,6 @@ const OnboardingPage = () => {
           ))}
         </div>
 
-        {/* CONTINUE */}
         <button
           onClick={handleSubmit}
           className="w-full bg-red-500 text-white py-3 rounded-lg font-medium"
@@ -96,7 +111,6 @@ const OnboardingPage = () => {
           Continue
         </button>
       </motion.div>
-
     </main>
   );
 };

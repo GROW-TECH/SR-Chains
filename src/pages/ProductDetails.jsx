@@ -5,154 +5,284 @@ import Footer from "../components/Footer";
 export default function ProductDetails() {
   const navigate = useNavigate();
 
-  const [selectedImage, setSelectedImage] = useState(
-    "https://cdnmedia-breeze.vaibhavjewellers.com/media/catalog/product/cache/30d09bf8af51e4fea389519968dfdb4b/image/1517226c6/sterling-silver-men-s-party-wear-bracelet-208vo5368-208vo5368.jpg"
-  );
-  const [activeTab, setActiveTab] = useState("details");
-  const [isWishlisted, setIsWishlisted] = useState(false);
-  const [quantity, setQuantity] = useState(1);
-
+  /* ================= IMAGES ================= */
   const productImages = [
-    selectedImage,
     "https://aurajewels.s3.amazonaws.com/images/AuraJewels/silbrc021p",
     "https://www.giva.co/cdn/shop/files/BR0221_1.jpg?v=1694080362",
+    "https://cdnmedia-breeze.vaibhavjewellers.com/media/catalog/product/cache/30d09bf8af51e4fea389519968dfdb4b/image/1517226c6/sterling-silver-men-s-party-wear-bracelet-208vo5368-208vo5368.jpg",
   ];
 
-  const handleAddToCart = () => {
-    alert("Added to cart");
-    navigate("/cart");
+  /* ================= PRODUCT (MD) ================= */
+  const product = {
+    designNo: "SR-SLV-1023",
+    name: "Antique Silver Bracelet",
+    category: "Bracelet",
+    size: '7.5"',
+    sizeRange: '4" to 12.5"',
+    weightPerInch: 12.2,
+    wastagePercent: 20,
+    makingChargePerKg: 18000,
+    stockStatus: "Ready for Dispatch",
   };
 
+  /* ================= REVIEWS ================= */
+  const reviews = [
+    {
+      id: 1,
+      name: "Ananya",
+      location: "Chennai",
+      rating: 5,
+      comment: "Excellent finish and premium quality.",
+      images: ["https://i.imgur.com/0y8Ftya.jpg"],
+    },
+    {
+      id: 2,
+      name: "Ravi",
+      location: "Coimbatore",
+      rating: 4,
+      comment: "Good shine and perfect fitting.",
+      images: ["https://i.imgur.com/mK3Z0j4.jpg"],
+    },
+  ];
+
+  /* ================= STATES ================= */
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [zoomStyle, setZoomStyle] = useState({ transform: "scale(1)" });
+  const [quantity, setQuantity] = useState(1);
+  const [wishlist, setWishlist] = useState(false);
+  const [cartModalOpen, setCartModalOpen] = useState(false);
+  const [selectedSize, setSelectedSize] = useState(7.5);
+
+  /* ================= SILVER RATE ENGINE (MD) ================= */
+  const mcxRate = 75;        // from API
+  const premium = 3;         // admin set
+  const purity = 92.5;       // sterling silver
+
+  const netRate = mcxRate + premium;
+  const retailRate = netRate + netRate * 0.01;
+
+  const weight = selectedSize * product.weightPerInch;
+  const purePayable =
+    (weight * (purity + product.wastagePercent)) / 100;
+
+  const makingCharges =
+    (product.makingChargePerKg / 1000) * weight;
+
+  const amount = purePayable * retailRate + makingCharges;
+  const gst = amount * 0.03;
+  const finalAmount = (amount + gst) * quantity;
+
+  /* ================= IMAGE NAV ================= */
+  const prevImage = () =>
+    setSelectedIndex((i) =>
+      i === 0 ? productImages.length - 1 : i - 1
+    );
+
+  const nextImage = () =>
+    setSelectedIndex((i) =>
+      i === productImages.length - 1 ? 0 : i + 1
+    );
+
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8 text-sm">
-      {/* ================= TOP SECTION ================= */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
-        {/* LEFT - IMAGES */}
+    <div className="max-w-6xl mx-auto px-4 py-8 text-sm">
+      {/* ================= TOP ================= */}
+      <div className="grid lg:grid-cols-2 gap-10 mb-12">
+        {/* IMAGE */}
         <div>
-          <div className="h-[450px] bg-gray-50 rounded-xl flex items-center justify-center mb-4">
+          <div
+            className="bg-gray-50 h-[420px] rounded-xl overflow-hidden relative"
+            onMouseMove={(e) => {
+              const r = e.currentTarget.getBoundingClientRect();
+              setZoomStyle({
+                transformOrigin: `${((e.clientX - r.left) / r.width) * 100}% ${
+                  ((e.clientY - r.top) / r.height) * 100
+                }%`,
+                transform: "scale(2)",
+              });
+            }}
+            onMouseLeave={() =>
+              setZoomStyle({ transform: "scale(1)" })
+            }
+          >
             <img
-              src={selectedImage}
-              alt="Product"
-              className="h-full object-contain"
+              src={productImages[selectedIndex]}
+              className="w-full h-full object-contain transition-transform"
+              style={zoomStyle}
+              alt="Silver Jewellery"
             />
+
+            <button
+              onClick={prevImage}
+              className="absolute left-3 top-1/2 -translate-y-1/2 bg-white w-9 h-9 rounded-full shadow"
+            >
+              ‹
+            </button>
+            <button
+              onClick={nextImage}
+              className="absolute right-3 top-1/2 -translate-y-1/2 bg-white w-9 h-9 rounded-full shadow"
+            >
+              ›
+            </button>
           </div>
 
-          <div className="flex gap-3 justify-center">
+          <div className="flex justify-center gap-3 mt-4">
             {productImages.map((img, i) => (
               <img
                 key={i}
                 src={img}
-                onClick={() => setSelectedImage(img)}
-                className={`w-20 h-20 rounded-lg object-cover cursor-pointer border ${
-                  selectedImage === img ? "border-[#b46b74]" : "border-gray-200"
+                onClick={() => setSelectedIndex(i)}
+                className={`w-20 h-20 rounded-lg border cursor-pointer ${
+                  i === selectedIndex
+                    ? "border-gray-800"
+                    : "border-gray-200"
                 }`}
               />
             ))}
           </div>
-
-          <h1 className="text-xl font-bold text-gray-800 mt-6">
-            Antique Gold Bangle with Ruby Stones
-          </h1>
-          <p className="text-gray-600 mt-1">
-            Premium handcrafted traditional design
-          </p>
         </div>
 
-        {/* RIGHT - BUY BOX */}
-        <div className="bg-white border rounded-xl p-6 space-y-6">
-          <div>
-            <span className="text-3xl font-bold text-[#b46b74]">₹4,55,752</span>
-            <span className="ml-3 text-gray-500 line-through">₹4,87,548</span>
+        {/* BUY BOX */}
+        <div className="space-y-6">
+          <h1 className="text-xl font-bold">{product.name}</h1>
+          <p className="text-gray-500">Design No: {product.designNo}</p>
+
+          <div className="text-3xl font-bold">
+            ₹{finalAmount.toFixed(2)}
           </div>
 
-          <div className="text-[#b46b74] font-medium">Dispatch in 20 days</div>
-
-          {/* Quantity */}
-          <div>
-            <label className="block mb-1 font-medium">Quantity</label>
-            <select
-              value={quantity}
-              onChange={(e) => setQuantity(Number(e.target.value))}
-              className="border px-4 py-2 rounded-lg"
-            >
-              {[1, 2, 3, 4, 5].map((q) => (
-                <option key={q}>{q}</option>
-              ))}
-            </select>
+          {/* PRODUCT OVERVIEW */}
+          <div className="border rounded-xl p-4 space-y-2">
+            <Detail label="Category" value={product.category} />
+            <Detail label="Size" value={product.size} />
+            <Detail label="Size Range" value={product.sizeRange} />
+            <Detail label="Weight / Inch" value={`${product.weightPerInch} g`} />
+            <Detail label="Wastage" value={`${product.wastagePercent}%`} />
+            <Detail label="Making Charges" value={`₹${product.makingChargePerKg} / kg`} />
+            <Detail label="Stock Status" value={product.stockStatus} />
           </div>
 
-          {/* Buttons */}
           <button
-            onClick={handleAddToCart}
-            className="w-full bg-[#b46b74] hover:bg-[#9f5961] text-white py-3 rounded-lg font-medium"
+            onClick={() => setCartModalOpen(true)}
+            className="w-full bg-gray-800 text-white py-3 rounded-lg"
           >
             ADD TO CART
           </button>
 
           <button
-            onClick={() => setIsWishlisted(!isWishlisted)}
-            className="w-full border border-[#b46b74] text-[#b46b74] py-3 rounded-lg hover:bg-[#b46b74] hover:text-white transition"
+            onClick={() => setWishlist(!wishlist)}
+            className="w-full border py-3 rounded-lg"
           >
-            {isWishlisted ? "WISHLISTED ❤️" : "ADD TO WISHLIST"}
+            {wishlist ? "WISHLISTED ❤️" : "ADD TO WISHLIST"}
           </button>
-
-          <button
-            onClick={() => navigate("/cart")}
-            className="w-full text-sm underline text-[#b46b74] hover:text-[#9f5961]"
-          >
-            View Cart →
-          </button>
-        </div>
-      </div>
-
-      {/* ================= TABS ================= */}
-      <div className="bg-white rounded-xl border mb-8">
-        <div className="flex border-b">
-          {["details", "enquiry"].map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`flex-1 py-4 font-medium ${
-                activeTab === tab
-                  ? "border-b-2 border-[#b46b74] text-[#b46b74]"
-                  : "text-gray-500"
-              }`}
-            >
-              {tab === "details" ? "PRODUCT DETAILS" : "CUSTOMER ENQUIRY"}
-            </button>
-          ))}
-        </div>
-
-        <div className="p-6 text-gray-700">
-          {activeTab === "details" ? (
-            <p>
-              This antique gold bangle is handcrafted with precision and
-              traditional artistry, perfect for elegant occasions and daily
-              luxury wear.
-            </p>
-          ) : (
-            <button className="bg-[#b46b74] hover:bg-[#9f5961] text-white px-6 py-2 rounded-lg">
-              Send Enquiry
-            </button>
-          )}
         </div>
       </div>
 
       {/* ================= REVIEWS ================= */}
-      <div className="bg-white rounded-xl border p-6 mb-8">
-        <h3 className="text-lg font-bold mb-4">Customer Reviews</h3>
+      <div className="border rounded-xl p-6 mb-10">
+        <h3 className="font-semibold mb-4">
+          Customer Reviews ({reviews.length})
+        </h3>
 
-        <div className="border-l-4 border-[#b46b74] pl-4 mb-4">
-          <p className="italic">“Excellent finishing and premium look.”</p>
-          <span className="text-xs text-gray-500">– Ananya, Chennai</span>
-        </div>
+        {reviews.map((r) => (
+          <div key={r.id} className="border-b pb-4 mb-4">
+            <div className="flex justify-between mb-1">
+              <span className="font-medium">
+                {r.name} ({r.location})
+              </span>
+              <span className="text-yellow-500">
+                {"★".repeat(r.rating)}
+              </span>
+            </div>
+            <p className="mb-2">{r.comment}</p>
+            <div className="flex gap-2">
+              {r.images.map((img, i) => (
+                <img
+                  key={i}
+                  src={img}
+                  className="w-20 h-20 rounded-lg border"
+                />
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+{/* ================= ADD TO CART MODAL ================= */}
+{cartModalOpen && (
+  <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
+    <div className="bg-white rounded-xl p-6 w-full max-w-md relative">
+      <h3 className="font-semibold mb-4">Select Options</h3>
 
-        <button className="w-full border border-dashed border-gray-300 py-3 rounded-lg hover:border-[#b46b74] hover:text-[#b46b74]">
-          + Write Your Review
+      {/* Design No */}
+      <label className="block mb-1 text-sm">Design Number</label>
+      <input
+        value={product.designNo}
+        readOnly
+        className="w-full border px-3 py-2 mb-4 bg-gray-100 rounded"
+      />
+
+      {/* Size */}
+      <label className="block mb-1 text-sm">Size</label>
+      <select
+        value={selectedSize}
+        onChange={(e) => setSelectedSize(Number(e.target.value))}
+        className="w-full border px-3 py-2 mb-4 rounded"
+      >
+        {[4,4.5,5,5.5,6,6.5,7,7.5,8,8.5,9,10,11,12.5].map((s) => (
+          <option key={s} value={s}>
+            {s}"
+          </option>
+        ))}
+      </select>
+
+      {/* Quantity */}
+      <label className="block mb-1 text-sm">Quantity</label>
+      <input
+        type="number"
+        min={1}
+        value={quantity}
+        onChange={(e) => setQuantity(+e.target.value)}
+        className="w-full border px-3 py-2 mb-6 rounded"
+      />
+
+      {/* Buttons */}
+      <div className="flex gap-3">
+        <button
+          onClick={() => setCartModalOpen(false)}
+          className="flex-1 border py-2 rounded-lg"
+        >
+          Cancel
+        </button>
+
+        <button
+          onClick={() => {
+            setCartModalOpen(false);
+            navigate("/cart");
+          }}
+          className="flex-1 bg-gray-800 text-white py-2 rounded-lg"
+        >
+          Confirm & Add
         </button>
       </div>
+
+      {/* Close */}
+      <button
+        onClick={() => setCartModalOpen(false)}
+        className="absolute top-3 right-4 text-xl"
+      >
+        ✕
+      </button>
+    </div>
+  </div>
+)}
 
       <Footer />
     </div>
   );
 }
+
+const Detail = ({ label, value }) => (
+  <div className="flex justify-between">
+    <span>{label}</span>
+    <span className="font-medium">{value}</span>
+  </div>
+);

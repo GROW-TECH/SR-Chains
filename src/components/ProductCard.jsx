@@ -1,49 +1,85 @@
-import PropTypes from "prop-types";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const ProductCard = ({ product }) => {
+const ProductCard = ({ item }) => {
   const navigate = useNavigate();
+  const cardRef = useRef(null);
+
+  const [imgIndex, setImgIndex] = useState(0);
+  const [active, setActive] = useState(false);
+
+  // 👁️ OBSERVE VISIBILITY
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => setActive(entry.isIntersecting),
+      { threshold: 0.6 }
+    );
+
+    if (cardRef.current) observer.observe(cardRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  // 🔁 AUTO SLIDE (ONLY WHEN ACTIVE)
+  useEffect(() => {
+    if (!active || item.images.length <= 1) return;
+
+    const timer = setInterval(() => {
+      setImgIndex((i) => (i + 1) % item.images.length);
+    }, 2500);
+
+    return () => clearInterval(timer);
+  }, [active, item.images.length]);
+
+  // 👉 CLICK HANDLER
+  const openProduct = () => {
+
+    console.log(item);
+    
+    navigate(
+      `/collection/${item.category}/${item.designNo}/${item.id}`
+    );
+  };
 
   return (
     <div
-      onClick={() => navigate(`/ProductDetails/${product.id}`)}
-      className="bg-white rounded-xl shadow hover:shadow-lg transition p-3 cursor-pointer"
+      ref={cardRef}
+      onClick={openProduct}
+      className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition cursor-pointer"
     >
-      <img
-        src={product.img}
-        alt={product.name}
-        className="h-56 w-full object-cover rounded-lg"
-      />
-
-      <div className="mt-3">
-        <h3 className="text-lg font-semibold">{product.name}</h3>
-
-        <p className="text-[#7A4A4A] font-medium mt-1">
-          ₹{product.price.toLocaleString()}
-        </p>
-
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            navigate(`/product/${product.id}`);
-          }}
-          className="mt-3 w-full bg-[#7A4A4A] text-white py-2 rounded-lg hover:opacity-90"
+      {/* IMAGE SLIDER */}
+      <div className="relative h-56 overflow-hidden">
+        <div
+          className="flex h-full transition-transform duration-700 ease-in-out"
+          style={{ transform: `translateX(-${imgIndex * 100}%)` }}
         >
-          View Product
-        </button>
+          {item.images.map((img, i) => (
+            <img
+              key={i}
+              src={img}
+              alt={item.name}
+              className="w-full h-full object-cover flex-shrink-0"
+            />
+          ))}
+        </div>
+
+        {/* DESIGN NO */}
+        <span className="absolute top-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
+          {item.designNo}
+        </span>
+      </div>
+
+      {/* DETAILS */}
+      <div className="p-4 text-sm space-y-1">
+        <h3 className="font-semibold text-base">{item.name}</h3>
+        <p className="text-gray-500 capitalize">{item.categorySlug}</p>
+
+        <div className="flex justify-between text-xs text-gray-600">
+          <span>Variant: {item.variant}</span>
+          <span>Size: {item.sizeRange}</span>
+        </div>
       </div>
     </div>
   );
-};
-
-/* ✅ PROP TYPES (IMPORTANT) */
-ProductCard.propTypes = {
-  product: PropTypes.shape({
-    id: PropTypes.number.isRequired,
-    name: PropTypes.string.isRequired,
-    img: PropTypes.string.isRequired,
-    price: PropTypes.number.isRequired,
-  }).isRequired,
 };
 
 export default ProductCard;
