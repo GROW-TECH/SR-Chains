@@ -24,15 +24,34 @@ const searchData = [
 
 const SearchBar = ({
   placeholder = "Search jewellery, category or collection",
-  cartCount = 8,
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [results, setResults] = useState([]);
   const [open, setOpen] = useState(false);
+  const [cartCount, setCartCount] = useState(0);
 
   const inputRef = useRef(null);
   const modalRef = useRef(null);
   const navigate = useNavigate();
+
+  /* ================= CART COUNT ================= */
+  const updateCartCount = () => {
+    const cart = JSON.parse(sessionStorage.getItem("sr_cart")) || [];
+    const totalQty = cart.reduce(
+      (sum, item) => sum + item.quantity,
+      0
+    );
+    setCartCount(totalQty);
+  };
+
+  useEffect(() => {
+    updateCartCount();
+
+    // 🔁 listen to cart updates from other pages
+    window.addEventListener("storage", updateCartCount);
+    return () =>
+      window.removeEventListener("storage", updateCartCount);
+  }, []);
 
   /* Close on outside click */
   useEffect(() => {
@@ -47,7 +66,8 @@ const SearchBar = ({
     };
 
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    return () =>
+      document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   /* Filter results */
@@ -122,7 +142,6 @@ const SearchBar = ({
 
 SearchBar.propTypes = {
   placeholder: PropTypes.string,
-  cartCount: PropTypes.number,
 };
 
 export default SearchBar;

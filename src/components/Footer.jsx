@@ -7,9 +7,12 @@ import {
 } from "react-icons/ai";
 
 const Footer = () => {
+  const isLoggedIn = !!sessionStorage.getItem("sr_session_user");
+
   return (
     <footer className="fixed bottom-0 left-0 w-full bg-white border-t shadow-md z-50">
       <div className="flex justify-around items-center py-2 text-xs text-gray-600">
+        {/* HOME */}
         <NavLink
           to="/"
           className={({ isActive }) =>
@@ -20,6 +23,7 @@ const Footer = () => {
           <span>Home</span>
         </NavLink>
 
+        {/* CATEGORIES */}
         <NavLink
           to="/categories"
           className={({ isActive }) =>
@@ -30,8 +34,9 @@ const Footer = () => {
           <span>Categories</span>
         </NavLink>
 
+        {/* ORDERS (optional: protect later) */}
         <NavLink
-          to="/orders"
+          to={isLoggedIn ? "/orders" : "/login"}
           className={({ isActive }) =>
             `flex flex-col items-center ${isActive ? "text-[#7A4A4A]" : ""}`
           }
@@ -40,14 +45,15 @@ const Footer = () => {
           <span>My Orders</span>
         </NavLink>
 
+        {/* LOGIN / PROFILE */}
         <NavLink
-          to="/login"
+          to={isLoggedIn ? "/profile" : "/login"}
           className={({ isActive }) =>
             `flex flex-col items-center ${isActive ? "text-[#7A4A4A]" : ""}`
           }
         >
           <AiOutlineUser size={22} />
-          <span>Login</span>
+          <span>{isLoggedIn ? "Profile" : "Login"}</span>
         </NavLink>
       </div>
     </footer>

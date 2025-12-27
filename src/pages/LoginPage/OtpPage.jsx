@@ -7,17 +7,23 @@ const OtpPage = () => {
   const [timer, setTimer] = useState(18);
   const navigate = useNavigate();
   const { state } = useLocation();
-  const [profile_completed,setProfileCompleted]=useState(false); // Example state to represent user profile completion
-
 
   const mobile = state?.mobile;
 
+  // ⏱️ OTP TIMER
   useEffect(() => {
     const interval = setInterval(() => {
       setTimer((prev) => (prev > 0 ? prev - 1 : 0));
     }, 1000);
     return () => clearInterval(interval);
   }, []);
+
+  // ❌ SAFETY CHECK
+  useEffect(() => {
+    if (!mobile) {
+      navigate("/login", { replace: true });
+    }
+  }, [mobile]);
 
   const handleChange = (value, index) => {
     if (!/^[0-9]?$/.test(value)) return;
@@ -27,25 +33,44 @@ const OtpPage = () => {
     setOtp(newOtp);
 
     if (value && index < 5) {
-      document.getElementById(`otp-${index + 1}`).focus();
+      document.getElementById(`otp-${index + 1}`)?.focus();
     }
   };
 
-  const verifyOtp = () => {
-    const enteredOtp = otp.join("");
-    if (enteredOtp.length !== 6) return;
+ const verifyOtp = () => {
+  const enteredOtp = otp.join("");
+  if (enteredOtp.length !== 6) return;
 
-if (!profile_completed) {
-  navigate("/onboarding");
-} else {
-  navigate("/dashboard");
-}
+  const tempUser = JSON.parse(sessionStorage.getItem("sr_temp_user"));
+  if (!tempUser) {
+    navigate("/login", { replace: true });
+    return;
+  }
 
+  // ✅ CREATE USER SESSION
+  const user = {
+    mobile: tempUser.mobile,
+    isNew: tempUser.flow === "signup",
+    loggedAt: Date.now(),
   };
+
+  // 🔥 STORE IN LOCAL (PERSISTENT)
+  localStorage.setItem("sr_user", JSON.stringify(user));
+
+  // CLEAN TEMP
+  sessionStorage.removeItem("sr_temp_user");
+
+  // ROUTE
+  if (user.isNew) {
+    navigate("/onboarding", { replace: true });
+  } else {
+    navigate("/", { replace: true });
+  }
+};
+
 
   return (
     <main className="min-h-screen flex flex-col px-6 py-8">
-
       {/* HEADER */}
       <button
         onClick={() => navigate(-1)}
@@ -63,9 +88,11 @@ if (!profile_completed) {
         <p className="text-gray-600 mb-4">
           We have sent a verification code to
         </p>
-        <p className="font-semibold mb-8">+91-{mobile}</p>
+        <p className="font-semibold mb-8">
+          +91-{mobile}
+        </p>
 
-        {/* OTP BOXES */}
+        {/* OTP INPUTS */}
         <div className="flex justify-center gap-3 mb-6">
           {otp.map((digit, index) => (
             <input
@@ -74,7 +101,9 @@ if (!profile_completed) {
               type="text"
               maxLength={1}
               value={digit}
-              onChange={(e) => handleChange(e.target.value, index)}
+              onChange={(e) =>
+                handleChange(e.target.value, index)
+              }
               className="w-12 h-12 text-center text-xl border rounded-lg"
             />
           ))}
@@ -86,7 +115,10 @@ if (!profile_completed) {
           {timer > 0 ? (
             <span>Resend SMS in {timer}s</span>
           ) : (
-            <button className="text-red-500 font-medium">
+            <button
+              onClick={() => setTimer(18)}
+              className="text-red-500 font-medium"
+            >
               Resend OTP
             </button>
           )}
@@ -105,7 +137,7 @@ if (!profile_completed) {
           onClick={() => navigate("/login")}
           className="mt-6 text-red-500"
         >
-          Go back to login methods
+          Go back to login
         </button>
       </motion.div>
     </main>

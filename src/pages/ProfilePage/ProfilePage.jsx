@@ -1,78 +1,122 @@
 import { Avatar } from "@chakra-ui/react";
-import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { FaRegEdit } from "react-icons/fa";
-import StoryModal from "../../modals/StoryModal";
-import EditProfileModal from "../../modals/EditProfileModal";
+import Footer from "../../components/Footer";
 
 const ProfilePage = () => {
-  const { name, description, phone, imageUrl } = useSelector(
-    (state) => state.user
-  );
-  const [isProfileModalVisible, setIsProfileModalVisible] = useState(false);
+  const navigate = useNavigate();
+  const user = JSON.parse(sessionStorage.getItem("sr_user"));
+
+  const [showEdit, setShowEdit] = useState(false);
+
+  if (!user) {
+    navigate("/login");
+    return null;
+  }
+
+  const logout = () => {
+    sessionStorage.removeItem("sr_user");
+    navigate("/login");
+  };
 
   return (
-    <main className="my-2 border-t mx-20 max-[500px]:mx-7">
-      <div className="relative bg-zomato bg-center bg-cover text-white flex justify-between items-center p-6 max-[500px]:px-3 py-10">
-        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
-        <section className="flex items-center gap-4 max-[500px]:gap-2 z-10">
-          <div className="border-4 border-white rounded-full">
-            {!imageUrl ? (
-              <Avatar size="2xl" />
-            ) : (
-              <img
-                src={imageUrl}
-                className="w-36 max-[500px]:w-20 rounded-full"
-                alt="profile"
-              />
-            )}
+    <div className="min-h-screen bg-gray-50 pb-24">
+      {/* ================= HEADER ================= */}
+      <div className="bg-gradient-to-r from-[#7A4A4A] to-[#b46b74] text-white px-6 py-10">
+        <div className="flex items-center gap-4">
+          {user.imageUrl ? (
+            <img
+              src={user.imageUrl}
+              alt="profile"
+              className="w-20 h-20 rounded-full border-4 border-white"
+            />
+          ) : (
+            <Avatar size="xl" />
+          )}
+
+          <div>
+            <h2 className="text-xl font-semibold">
+              {user.name || "Customer"}
+            </h2>
+            <p className="text-sm opacity-90">
+              +91 {user.phone}
+            </p>
           </div>
-          <div className="flex flex-col capitalize">
-            <span className="font-medium text-xl max-[500px]:text-lg">
-              {name}
-            </span>
-            {description ? (
-              <span className="max-[500px]:text-sm">{description}</span>
-            ) : null}
-            {phone ? (
-              <span className="max-[500px]:text-sm">{phone}</span>
-            ) : null}
-          </div>
-        </section>
+        </div>
+
+        {/* EDIT */}
         <button
-          onClick={() => setIsProfileModalVisible(!isProfileModalVisible)}
-          className="flex items-center max-[500px]:text-sm gap-2 p-2 px-4 bg-[#EF4F5F] text-white rounded-md z-10"
+          onClick={() => setShowEdit(true)}
+          className="mt-4 inline-flex items-center gap-2 bg-white text-[#7A4A4A] px-4 py-2 rounded-lg text-sm font-medium"
         >
-          <FaRegEdit className="text-xs" />
-          <span>Edit Profile</span>
+          <FaRegEdit />
+          Edit Profile
         </button>
       </div>
 
-      <section className="flex flex-col gap-4 justify-center items-center my-10">
-        <img
-          src="https://b.zmtcdn.com/webFrontend/691ad4ad27a5804a3033977d45390c811584432410.png"
-          alt="decoration"
-          className="w-40"
+      {/* ================= OPTIONS ================= */}
+      <div className="px-6 py-6 space-y-4">
+        <ProfileItem
+          title="My Orders"
+          onClick={() => navigate("/orders")}
         />
-        <div className="text-center">
-          <p className="text-2xl font-medium">
-            Stay tuned for more interesting features
-          </p>
-          <p className="text-gray-500">
-            (Reviews, Photos, Followers, Recently Viewed, Blog Posts, Order
-            history and many more.)
-          </p>
-        </div>
-      </section>
+        <ProfileItem
+          title="Wishlist"
+          onClick={() => navigate("/wishlist")}
+        />
+        <ProfileItem
+          title="Saved Addresses"
+          onClick={() => navigate("/addresses")}
+        />
+        <ProfileItem
+          title="Support"
+          onClick={() => navigate("/support")}
+        />
+      </div>
 
-      {isProfileModalVisible && (
-        <EditProfileModal
-          isProfileModalVisible={isProfileModalVisible}
-          setIsProfileModalVisible={setIsProfileModalVisible}
-        />
+      {/* ================= LOGOUT ================= */}
+      <div className="px-6">
+        <button
+          onClick={logout}
+          className="w-full border border-red-500 text-red-500 py-3 rounded-lg font-medium"
+        >
+          Logout
+        </button>
+      </div>
+
+      {/* EDIT MODAL PLACEHOLDER */}
+      {showEdit && (
+        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center">
+          <div className="bg-white rounded-xl p-6 w-[90%] max-w-md">
+            <h3 className="font-semibold mb-4">Edit Profile</h3>
+            <p className="text-sm text-gray-500 mb-4">
+              (Hook your Edit Profile modal here)
+            </p>
+            <button
+              onClick={() => setShowEdit(false)}
+              className="w-full bg-[#7A4A4A] text-white py-2 rounded-lg"
+            >
+              Close
+            </button>
+          </div>
+        </div>
       )}
-    </main>
+
+      <Footer />
+    </div>
   );
 };
 
 export default ProfilePage;
+
+/* ================= SMALL COMPONENT ================= */
+const ProfileItem = ({ title, onClick }) => (
+  <button
+    onClick={onClick}
+    className="w-full flex justify-between items-center bg-white p-4 rounded-xl shadow-sm"
+  >
+    <span className="font-medium">{title}</span>
+    <span className="text-gray-400">›</span>
+  </button>
+);

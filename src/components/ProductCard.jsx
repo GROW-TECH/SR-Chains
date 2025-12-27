@@ -36,7 +36,7 @@ const ProductCard = ({ item }) => {
     console.log(item);
     
     navigate(
-      `/collection/${item.category}/${item.designNo}/${item.id}`
+      `/product/${item.id}`
     );
   };
 

@@ -4,6 +4,7 @@ import { productsData } from "../components/data/products";
 import SearchFilterHeader from "./SearchFilterHeader";
 import FilterSheet from "../components/FilterSheet";
 import ProductCard from "../components/ProductCard";
+import Footer from "../components/Footer";
 
 const CategoryProductsPage = () => {
   const { slug } = useParams();
@@ -12,7 +13,10 @@ const CategoryProductsPage = () => {
   const [showFilter, setShowFilter] = useState(false);
   const [search, setSearch] = useState("");
 
-  const products = productsData[slug] || [];
+  // ✅ FIXED LOGIC (flat array → filter by slug)
+  const products = productsData.filter(
+    (p) => p.categorySlug === slug
+  );
 
   const filteredProducts = products.filter((p) =>
     p.name.toLowerCase().includes(search.toLowerCase())
@@ -49,6 +53,8 @@ const CategoryProductsPage = () => {
           </div>
         )}
       </div>
+
+      <Footer/>
     </>
   );
 };

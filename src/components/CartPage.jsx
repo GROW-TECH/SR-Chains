@@ -1,227 +1,266 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useToast } from "@chakra-ui/react";
 import Footer from "./Footer";
-
-/* ---------------- DEMO CART DATA (SILVER) ---------------- */
-
-const initialCart = [
-  {
-    quantity: 1,
-    product: {
-      _id: "silver1",
-      name: "925 STERLING SILVER LADIES BRACELET",
-      imageUrl:
-        "https://i.pinimg.com/736x/6b/24/73/6b24730bbfc616ebecd1e00a896609dd.jpg",
-      price: 5890,
-      oldPrice: 6990,
-    },
-  },
-];
+import { coupons } from "./data/coupons";
+import SearchBar from "./SearchBar";
 
 export default function CartPage() {
   const toast = useToast();
-  const [cart, setCart] = useState(initialCart);
 
-  /* ---------------- HANDLERS ---------------- */
+  const [cart, setCart] = useState([]);
+  const [couponCode, setCouponCode] = useState("");
+  const [paymentMode, setPaymentMode] = useState("");
+  const [discountAmount, setDiscountAmount] = useState(0);
 
-  const increaseQty = (id) => {
-    setCart((prev) =>
-      prev.map((item) =>
-        item.product._id === id
-          ? { ...item, quantity: item.quantity + 1 }
-          : item
+  /* ================= LOAD CART ================= */
+  useEffect(() => {
+    const stored = JSON.parse(sessionStorage.getItem("sr_cart")) || [];
+    setCart(stored);
+  }, []);
+
+  /* ================= SAVE CART ================= */
+  const syncCart = (updated) => {
+    setCart(updated);
+    sessionStorage.setItem("sr_cart", JSON.stringify(updated));
+  };
+
+  /* ================= QTY ================= */
+  const increaseQty = (id, size) =>
+    syncCart(
+      cart.map((i) =>
+        i.product.id === id && i.size === size
+          ? { ...i, quantity: i.quantity + 1 }
+          : i
       )
     );
-  };
 
-  const decreaseQty = (id) => {
-    setCart((prev) =>
-      prev.map((item) =>
-        item.product._id === id
-          ? { ...item, quantity: Math.max(1, item.quantity - 1) }
-          : item
+  const decreaseQty = (id, size) =>
+    syncCart(
+      cart.map((i) =>
+        i.product.id === id && i.size === size
+          ? { ...i, quantity: Math.max(1, i.quantity - 1) }
+          : i
       )
     );
-  };
 
-  const removeItem = (id) => {
-    setCart((prev) => prev.filter((item) => item.product._id !== id));
+  const removeItem = (id, size) =>
+    syncCart(cart.filter((i) => !(i.product.id === id && i.size === size)));
 
-    toast({
-      title: "Item removed",
-      status: "info",
-      duration: 2000,
-      isClosable: true,
-    });
-  };
+  /* ================= GROUP CART ================= */
+  const groupedCart = cart.reduce((acc, item) => {
+    const pid = item.product.id;
+    if (!acc[pid]) acc[pid] = { product: item.product, items: [] };
+    acc[pid].items.push(item);
+    return acc;
+  }, {});
 
-  /* ---------------- CALCULATIONS ---------------- */
-
+  /* ================= TOTALS ================= */
   const cartTotal = cart.reduce(
-    (acc, item) => acc + item.product.price * item.quantity,
+    (sum, i) => sum + i.product.price * i.quantity,
     0
   );
 
-  const tax = Math.round(cartTotal * 0.03);
-  const grandTotal = cartTotal + tax;
+  const taxableAmount = Math.max(cartTotal - discountAmount, 0);
+  const tax = Math.round(taxableAmount * 0.03);
+  const grandTotal = taxableAmount + tax;
 
-  /* ---------------- UI ---------------- */
+  /* ================= APPLY COUPON ================= */
+  const applyCoupon = () => {
+    if (!couponCode) return;
 
+    const code = couponCode.trim().toUpperCase();
+    const coupon = coupons.find((c) => c.code === code && c.active);
+
+    if (!coupon) {
+      toast({ title: "Invalid coupon code", status: "error" });
+      return;
+    }
+
+    if (coupon.minAmount && cartTotal < coupon.minAmount) {
+      toast({
+        title: `Minimum order ₹${coupon.minAmount} required`,
+        status: "warning",
+      });
+      return;
+    }
+
+    if (code.startsWith("RTGS") && paymentMode !== "RTGS") {
+      toast({
+        title: "Coupon valid only for RTGS payment",
+        status: "warning",
+      });
+      return;
+    }
+
+    setDiscountAmount(coupon.value);
+
+    toast({
+      title: `Coupon ${coupon.code} applied`,
+      description: `₹${coupon.value} discount applied`,
+      status: "success",
+    });
+  };
+
+  /* ================= RESET COUPON ON PAYMENT CHANGE ================= */
+  useEffect(() => {
+    setDiscountAmount(0);
+    setCouponCode("");
+  }, [paymentMode]);
+
+  /* ================= CHECKOUT ================= */
+  const handleCheckout = () => {
+    if (!paymentMode) {
+      toast({ title: "Select payment mode", status: "warning" });
+      return;
+    }
+
+    const order = {
+      id: "ORD-" + Date.now(),
+      items: cart,
+      coupon: discountAmount ? couponCode : null,
+      paymentMode,
+      cartTotal,
+      discountAmount,
+      tax,
+      grandTotal,
+      status: "PAID",
+    };
+
+    sessionStorage.setItem("sr_last_order", JSON.stringify(order));
+    sessionStorage.removeItem("sr_cart");
+    setCart([]);
+
+    toast({ title: "Order placed successfully", status: "success" });
+  };
+
+  /* ================= UI ================= */
   return (
-    <div className="min-h-screen bg-gray-50 p-4 md:p-6">
-      {/* Breadcrumb */}
-      <div className="mb-6 text-sm text-gray-600 font-medium">
-        SHOPPING CART
+    <>
+
+          <div className="px-4 mt-3">
+        <SearchBar placeholder="Search silver jewellery..." />
       </div>
+    <div className="min-h-screen bg-gray-50 p-4 md:p-6">
+      <div className="max-w-7xl mx-auto grid lg:grid-cols-3 gap-6">
 
-      <div className="flex flex-col lg:flex-row gap-6 max-w-7xl mx-auto">
-        {/* CART ITEMS */}
-        <div className="lg:w-2/3">
-          <div className="bg-white rounded-xl shadow-md p-4 md:p-6">
-            <h2 className="text-xl md:text-2xl font-bold text-gray-800 mb-6">
-              Shopping Cart
-            </h2>
+        {/* ================= CART ================= */}
+        <div className="lg:col-span-2 bg-white rounded-xl p-6 shadow">
+          <h2 className="text-xl font-bold mb-6">Shopping Cart</h2>
 
-            {cart.length === 0 ? (
-              <div className="text-center py-16">
-                <p className="text-gray-500 text-sm mb-4">Your cart is empty</p>
-                <button className="text-[#b46b74] underline text-sm hover:text-[#9f5961]">
-                  Continue Shopping →
-                </button>
-              </div>
-            ) : (
-              cart.map((item) => {
-                const discountPercent = Math.round(
-                  ((item.product.oldPrice - item.product.price) /
-                    item.product.oldPrice) *
-                    100
-                );
+          {Object.values(groupedCart).length === 0 ? (
+            <p className="text-center text-gray-500 py-12">Your cart is empty</p>
+          ) : (
+            Object.values(groupedCart).map((group) => (
+              <div key={group.product.id} className="border rounded-xl p-4 mb-6">
+                <div className="flex gap-4 mb-4">
+                  <img
+                    src={group.product.imageUrl}
+                    className="w-28 h-28 rounded-lg border object-cover"
+                    alt={group.product.name}
+                  />
+                  <div>
+                    <h3 className="font-semibold">{group.product.name}</h3>
+                    <p className="text-xs text-gray-500">
+                      Multiple sizes selected
+                    </p>
+                  </div>
+                </div>
 
-                return (
+                {group.items.map((i) => (
                   <div
-                    key={item.product._id}
-                    className="flex flex-col sm:flex-row gap-4 p-4 border-b last:border-b-0"
+                    key={i.size}
+                    className="flex justify-between items-center border rounded px-3 py-2 mb-2 text-sm"
                   >
-                    {/* Image */}
-                    <div className="sm:w-32 md:w-40">
-                      <img
-                        src={item.product.imageUrl}
-                        alt={item.product.name}
-                        className="w-full rounded-lg object-cover"
-                        onError={(e) => {
-                          e.target.src =
-                            "https://via.placeholder.com/300x300?text=Silver";
-                        }}
-                      />
-                    </div>
+                    <span>Size {i.size}"</span>
 
-                    {/* Info */}
-                    <div className="flex-1">
-                      <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                        {item.product.name}
-                      </h3>
+                    <div className="flex items-center gap-2">
+                      <button onClick={() => decreaseQty(group.product.id, i.size)}>−</button>
+                      <span>{i.quantity}</span>
+                      <button onClick={() => increaseQty(group.product.id, i.size)}>+</button>
 
-                      <div className="flex items-center gap-3 mb-4 flex-wrap text-sm">
-                        <span className="text-lg font-bold text-gray-900">
-                          ₹{item.product.price.toLocaleString()}
-                        </span>
-                        <span className="text-gray-500 line-through">
-                          ₹{item.product.oldPrice.toLocaleString()}
-                        </span>
-                        <span className="text-[#b46b74] font-medium">
-                          ({discountPercent}% OFF)
-                        </span>
-                      </div>
+                      <span className="font-semibold min-w-[90px] text-right">
+                        ₹{(i.quantity * group.product.price).toLocaleString()}
+                      </span>
 
-                      {/* Quantity */}
-                      <div className="flex flex-wrap items-center justify-between gap-4">
-                        <div className="flex items-center border rounded-lg overflow-hidden text-sm">
-                          <button
-                            disabled={item.quantity === 1}
-                            onClick={() => decreaseQty(item.product._id)}
-                            className="px-4 py-2 bg-gray-100 disabled:text-gray-400"
-                          >
-                            −
-                          </button>
-
-                          <span className="px-4 py-2 min-w-[50px] text-center font-medium">
-                            {item.quantity}
-                          </span>
-
-                          <button
-                            onClick={() => increaseQty(item.product._id)}
-                            className="px-4 py-2 bg-gray-100"
-                          >
-                            +
-                          </button>
-                        </div>
-
-                        <button
-                          onClick={() => removeItem(item.product._id)}
-                          className="px-4 py-2 text-sm border border-[#b46b74] text-[#b46b74] rounded-lg hover:bg-[#b46b74] hover:text-white transition"
-                        >
-                          Remove
-                        </button>
-                      </div>
+                      <button
+                        onClick={() => removeItem(group.product.id, i.size)}
+                        className="text-red-500"
+                      >
+                        ✕
+                      </button>
                     </div>
                   </div>
-                );
-              })
-            )}
-          </div>
+                ))}
+              </div>
+            ))
+          )}
         </div>
 
-        {/* ORDER SUMMARY */}
-        <div className="lg:w-1/3">
-          <div className="bg-white rounded-xl shadow-md p-6 sticky top-6">
-            <h3 className="text-lg font-bold text-gray-800 mb-6 pb-4 border-b">
-              ORDER SUMMARY
-            </h3>
+        {/* ================= SUMMARY ================= */}
+        <div className="bg-white rounded-xl p-6 shadow space-y-4">
+          <div>
+            <label className="text-sm">Coupon Code</label>
+            <div className="flex gap-2">
+              <input
+                value={couponCode}
+                onChange={(e) => setCouponCode(e.target.value)}
+                className="flex-1 border px-3 py-2 rounded"
+              />
+              <button onClick={applyCoupon} className="bg-gray-800 text-white px-4 rounded">
+                Apply
+              </button>
+            </div>
+          </div>
 
-            <div className="space-y-4 mb-6 text-sm">
-              <div className="flex justify-between">
-                <span>Total Amount</span>
-                <span>₹{cartTotal.toLocaleString()}</span>
-              </div>
+          <div>
+            <label className="text-sm">Payment Mode</label>
+            <select
+              value={paymentMode}
+              onChange={(e) => setPaymentMode(e.target.value)}
+              className="w-full border px-3 py-2 rounded"
+            >
+              <option value="">Select</option>
+              <option value="RTGS">RTGS</option>
+              <option value="SilverSettlement">Silver Settlement</option>
+              <option value="DealerCredit">Dealer Credit</option>
+            </select>
+          </div>
 
-              <div className="flex justify-between">
-                <span>Tax (3%)</span>
-                <span>₹{tax.toLocaleString()}</span>
-              </div>
-
-              <div className="pt-4 border-t flex justify-between">
-                <span className="font-bold">GRAND TOTAL</span>
-                <span className="text-xl font-bold text-[#b46b74]">
-                  ₹{grandTotal.toLocaleString()}
-                </span>
-              </div>
+          <div className="text-sm border-t pt-4 space-y-2">
+            <div className="flex justify-between">
+              <span>Total</span>
+              <span>₹{cartTotal.toLocaleString()}</span>
             </div>
 
-            <button
-              className="w-full bg-[#b46b74] hover:bg-[#9f5961] text-white font-medium py-3 rounded-lg transition text-sm"
-              onClick={() =>
-                toast({
-                  title: "Demo Checkout",
-                  description: "This is a demo cart UI",
-                  status: "success",
-                  duration: 3000,
-                  isClosable: true,
-                })
-              }
-            >
-              PROCEED TO CHECKOUT
-            </button>
-
-            {cart.length > 0 && (
-              <p className="text-center text-gray-500 text-sm mt-4">
-                Free shipping on orders above ₹5000
-              </p>
+            {discountAmount > 0 && (
+              <div className="flex justify-between text-green-600">
+                <span>Coupon Discount</span>
+                <span>-₹{discountAmount.toLocaleString()}</span>
+              </div>
             )}
+
+            <div className="flex justify-between">
+              <span>Tax (3%)</span>
+              <span>₹{tax.toLocaleString()}</span>
+            </div>
+
+            <div className="flex justify-between font-bold text-lg border-t pt-2">
+              <span>Grand Total</span>
+              <span>₹{grandTotal.toLocaleString()}</span>
+            </div>
           </div>
+
+          <button
+            onClick={handleCheckout}
+            className="w-full bg-[#b46b74] text-white py-3 rounded-lg"
+          >
+            PLACE ORDER
+          </button>
         </div>
       </div>
 
       <Footer />
     </div>
+    </>
   );
 }

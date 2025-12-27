@@ -1,31 +1,20 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Footer from "../components/Footer";
+import { productsData } from "../components/data/products";
+import SearchBar from "../components/SearchBar";
 
 export default function ProductDetails() {
   const navigate = useNavigate();
+  const { id } = useParams();
+
+  const product = productsData.find(p => p.id === Number(id));
+  if (!product) return <div className="p-10 text-center">Product not found</div>;
 
   /* ================= IMAGES ================= */
-  const productImages = [
-    "https://aurajewels.s3.amazonaws.com/images/AuraJewels/silbrc021p",
-    "https://www.giva.co/cdn/shop/files/BR0221_1.jpg?v=1694080362",
-    "https://cdnmedia-breeze.vaibhavjewellers.com/media/catalog/product/cache/30d09bf8af51e4fea389519968dfdb4b/image/1517226c6/sterling-silver-men-s-party-wear-bracelet-208vo5368-208vo5368.jpg",
-  ];
+  const productImages = product.images;
 
-  /* ================= PRODUCT (MD) ================= */
-  const product = {
-    designNo: "SR-SLV-1023",
-    name: "Antique Silver Bracelet",
-    category: "Bracelet",
-    size: '7.5"',
-    sizeRange: '4" to 12.5"',
-    weightPerInch: 12.2,
-    wastagePercent: 20,
-    makingChargePerKg: 18000,
-    stockStatus: "Ready for Dispatch",
-  };
-
-  /* ================= REVIEWS ================= */
+  /* ================= REVIEWS (DEMO) ================= */
   const reviews = [
     {
       id: 1,
@@ -48,45 +37,92 @@ export default function ProductDetails() {
   /* ================= STATES ================= */
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [zoomStyle, setZoomStyle] = useState({ transform: "scale(1)" });
-  const [quantity, setQuantity] = useState(1);
   const [wishlist, setWishlist] = useState(false);
   const [cartModalOpen, setCartModalOpen] = useState(false);
-  const [selectedSize, setSelectedSize] = useState(7.5);
 
-  /* ================= SILVER RATE ENGINE (MD) ================= */
-  const mcxRate = 75;        // from API
-  const premium = 3;         // admin set
-  const purity = 92.5;       // sterling silver
+  const sizeOptions = [4,4.5,5,5.5,6,6.5,7,7.5,8,8.5,9,10,11,12.5];
 
+  const [sizeQtyMap, setSizeQtyMap] = useState(
+    sizeOptions.reduce((acc, s) => ({ ...acc, [s]: 0 }), {})
+  );
+
+  /* ================= PRICE ENGINE ================= */
+  const mcxRate = 75;
+  const premium = 3;
+  const purity = Number(product.purity);
   const netRate = mcxRate + premium;
   const retailRate = netRate + netRate * 0.01;
 
-  const weight = selectedSize * product.weightPerInch;
-  const purePayable =
-    (weight * (purity + product.wastagePercent)) / 100;
-
-  const makingCharges =
-    (product.makingChargePerKg / 1000) * weight;
-
-  const amount = purePayable * retailRate + makingCharges;
-  const gst = amount * 0.03;
-  const finalAmount = (amount + gst) * quantity;
-
   /* ================= IMAGE NAV ================= */
   const prevImage = () =>
-    setSelectedIndex((i) =>
-      i === 0 ? productImages.length - 1 : i - 1
-    );
-
+    setSelectedIndex(i => (i === 0 ? productImages.length - 1 : i - 1));
   const nextImage = () =>
-    setSelectedIndex((i) =>
-      i === productImages.length - 1 ? 0 : i + 1
-    );
+    setSelectedIndex(i => (i === productImages.length - 1 ? 0 : i + 1));
+
+  /* ================= ADD TO CART (MULTI SIZE) ================= */
+  const addToCart = () => {
+    const hasAnyQty = Object.values(sizeQtyMap).some(q => q > 0);
+if (!hasAnyQty) {
+  alert("Please select at least one size");
+  return;
+}
+
+    const cart = JSON.parse(sessionStorage.getItem("sr_cart")) || [];
+
+    Object.entries(sizeQtyMap).forEach(([size, qty]) => {
+      if (qty <= 0) return;
+
+      const sizeNum = Number(size);
+      const weight = sizeNum * product.weightPerInch;
+
+      const purePayable =
+        (weight * (purity + product.wastage)) / 100;
+      const makingCharges =
+        (product.makingCharge / 1000) * weight;
+
+      const amount = purePayable * retailRate + makingCharges;
+      const gst = amount * 0.03;
+      const unitPrice = amount + gst;
+
+      const existing = cart.find(
+        (item) =>
+          item.product.id === product.id &&
+          item.size === sizeNum
+      );
+
+      if (existing) {
+        existing.quantity += qty;
+      } else {
+        cart.push({
+          size: sizeNum,
+          quantity: qty,
+          product: {
+            id: product.id,
+            name: product.name,
+            imageUrl: product.images[0],
+            price: Number(unitPrice.toFixed(2)),
+            oldPrice: Number((unitPrice * 1.15).toFixed(2)),
+          },
+        });
+      }
+    });
+
+    sessionStorage.setItem("sr_cart", JSON.stringify(cart));
+    setCartModalOpen(false);
+    navigate("/cart");
+  };
 
   return (
+    <>
+          <div className="px-4 mt-3">
+            <SearchBar placeholder="Search silver jewellery..." />
+          </div>
     <div className="max-w-6xl mx-auto px-4 py-8 text-sm">
+
+
       {/* ================= TOP ================= */}
       <div className="grid lg:grid-cols-2 gap-10 mb-12">
+
         {/* IMAGE */}
         <div>
           <div
@@ -94,35 +130,20 @@ export default function ProductDetails() {
             onMouseMove={(e) => {
               const r = e.currentTarget.getBoundingClientRect();
               setZoomStyle({
-                transformOrigin: `${((e.clientX - r.left) / r.width) * 100}% ${
-                  ((e.clientY - r.top) / r.height) * 100
-                }%`,
+                transformOrigin: `${((e.clientX - r.left) / r.width) * 100}% ${((e.clientY - r.top) / r.height) * 100}%`,
                 transform: "scale(2)",
               });
             }}
-            onMouseLeave={() =>
-              setZoomStyle({ transform: "scale(1)" })
-            }
+            onMouseLeave={() => setZoomStyle({ transform: "scale(1)" })}
           >
             <img
               src={productImages[selectedIndex]}
-              className="w-full h-full object-contain transition-transform"
+              className="w-full h-full object-contain"
               style={zoomStyle}
-              alt="Silver Jewellery"
+              alt={product.name}
             />
-
-            <button
-              onClick={prevImage}
-              className="absolute left-3 top-1/2 -translate-y-1/2 bg-white w-9 h-9 rounded-full shadow"
-            >
-              ‹
-            </button>
-            <button
-              onClick={nextImage}
-              className="absolute right-3 top-1/2 -translate-y-1/2 bg-white w-9 h-9 rounded-full shadow"
-            >
-              ›
-            </button>
+            <button onClick={prevImage} className="absolute left-3 top-1/2 bg-white w-9 h-9 rounded-full shadow">‹</button>
+            <button onClick={nextImage} className="absolute right-3 top-1/2 bg-white w-9 h-9 rounded-full shadow">›</button>
           </div>
 
           <div className="flex justify-center gap-3 mt-4">
@@ -132,9 +153,7 @@ export default function ProductDetails() {
                 src={img}
                 onClick={() => setSelectedIndex(i)}
                 className={`w-20 h-20 rounded-lg border cursor-pointer ${
-                  i === selectedIndex
-                    ? "border-gray-800"
-                    : "border-gray-200"
+                  i === selectedIndex ? "border-gray-800" : "border-gray-200"
                 }`}
               />
             ))}
@@ -146,19 +165,12 @@ export default function ProductDetails() {
           <h1 className="text-xl font-bold">{product.name}</h1>
           <p className="text-gray-500">Design No: {product.designNo}</p>
 
-          <div className="text-3xl font-bold">
-            ₹{finalAmount.toFixed(2)}
-          </div>
-
-          {/* PRODUCT OVERVIEW */}
           <div className="border rounded-xl p-4 space-y-2">
-            <Detail label="Category" value={product.category} />
-            <Detail label="Size" value={product.size} />
+            <Detail label="Category" value={product.categorySlug.replace(/-/g, " ")} />
             <Detail label="Size Range" value={product.sizeRange} />
             <Detail label="Weight / Inch" value={`${product.weightPerInch} g`} />
-            <Detail label="Wastage" value={`${product.wastagePercent}%`} />
-            <Detail label="Making Charges" value={`₹${product.makingChargePerKg} / kg`} />
-            <Detail label="Stock Status" value={product.stockStatus} />
+            <Detail label="Wastage" value={`${product.wastage}%`} />
+            <Detail label="Making Charges" value={`₹${product.makingCharge} / kg`} />
           </div>
 
           <button
@@ -179,104 +191,77 @@ export default function ProductDetails() {
 
       {/* ================= REVIEWS ================= */}
       <div className="border rounded-xl p-6 mb-10">
-        <h3 className="font-semibold mb-4">
-          Customer Reviews ({reviews.length})
-        </h3>
-
-        {reviews.map((r) => (
+        <h3 className="font-semibold mb-4">Customer Reviews</h3>
+        {reviews.map(r => (
           <div key={r.id} className="border-b pb-4 mb-4">
-            <div className="flex justify-between mb-1">
-              <span className="font-medium">
-                {r.name} ({r.location})
-              </span>
-              <span className="text-yellow-500">
-                {"★".repeat(r.rating)}
-              </span>
+            <div className="flex justify-between">
+              <span className="font-medium">{r.name} ({r.location})</span>
+              <span className="text-yellow-500">{"★".repeat(r.rating)}</span>
             </div>
             <p className="mb-2">{r.comment}</p>
             <div className="flex gap-2">
-              {r.images.map((img, i) => (
-                <img
-                  key={i}
-                  src={img}
-                  className="w-20 h-20 rounded-lg border"
-                />
+              {r.images.map((img,i) => (
+                <img key={i} src={img} className="w-20 h-20 rounded-lg border" />
               ))}
             </div>
           </div>
         ))}
       </div>
-{/* ================= ADD TO CART MODAL ================= */}
-{cartModalOpen && (
-  <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
-    <div className="bg-white rounded-xl p-6 w-full max-w-md relative">
-      <h3 className="font-semibold mb-4">Select Options</h3>
 
-      {/* Design No */}
-      <label className="block mb-1 text-sm">Design Number</label>
-      <input
-        value={product.designNo}
-        readOnly
-        className="w-full border px-3 py-2 mb-4 bg-gray-100 rounded"
-      />
+      {/* ================= ADD TO CART MODAL ================= */}
+      {cartModalOpen && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
+          <div className="bg-white rounded-xl p-6 w-full max-w-md relative">
+            <h3 className="font-semibold mb-4">Select Sizes & Quantity</h3>
 
-      {/* Size */}
-      <label className="block mb-1 text-sm">Size</label>
-      <select
-        value={selectedSize}
-        onChange={(e) => setSelectedSize(Number(e.target.value))}
-        className="w-full border px-3 py-2 mb-4 rounded"
-      >
-        {[4,4.5,5,5.5,6,6.5,7,7.5,8,8.5,9,10,11,12.5].map((s) => (
-          <option key={s} value={s}>
-            {s}"
-          </option>
-        ))}
-      </select>
+            <div className="max-h-64 overflow-y-auto space-y-2 border rounded-lg p-3">
+              {sizeOptions.map(s => (
+                <div key={s} className="flex justify-between items-center">
+                  <span>{s}"</span>
+                  <input
+                    type="number"
+                    min={0}
+                    value={sizeQtyMap[s]}
+                    onChange={(e) =>
+                      setSizeQtyMap({
+                        ...sizeQtyMap,
+                        [s]: Number(e.target.value),
+                      })
+                    }
+                    className="w-20 border px-2 py-1 rounded text-center"
+                  />
+                </div>
+              ))}
+            </div>
 
-      {/* Quantity */}
-      <label className="block mb-1 text-sm">Quantity</label>
-      <input
-        type="number"
-        min={1}
-        value={quantity}
-        onChange={(e) => setQuantity(+e.target.value)}
-        className="w-full border px-3 py-2 mb-6 rounded"
-      />
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={() => setCartModalOpen(false)}
+                className="flex-1 border py-2 rounded-lg"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={addToCart}
+                className="flex-1 bg-gray-800 text-white py-2 rounded-lg"
+              >
+                Confirm & Add
+              </button>
+            </div>
 
-      {/* Buttons */}
-      <div className="flex gap-3">
-        <button
-          onClick={() => setCartModalOpen(false)}
-          className="flex-1 border py-2 rounded-lg"
-        >
-          Cancel
-        </button>
-
-        <button
-          onClick={() => {
-            setCartModalOpen(false);
-            navigate("/cart");
-          }}
-          className="flex-1 bg-gray-800 text-white py-2 rounded-lg"
-        >
-          Confirm & Add
-        </button>
-      </div>
-
-      {/* Close */}
-      <button
-        onClick={() => setCartModalOpen(false)}
-        className="absolute top-3 right-4 text-xl"
-      >
-        ✕
-      </button>
-    </div>
-  </div>
-)}
+            <button
+              onClick={() => setCartModalOpen(false)}
+              className="absolute top-3 right-4 text-xl"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
 
       <Footer />
     </div>
+    </>
   );
 }
 

@@ -18,13 +18,19 @@ const OnboardingPage = () => {
     "Bulk / Wholesale Orders",
   ];
 
-  // 🔒 GUARD
-  useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("sr_user"));
+useEffect(() => {
+  const user = JSON.parse(localStorage.getItem("sr_user"));
 
-    if (!user) navigate("/login");
-    if (user && user.isNew === false) navigate("/");
-  }, []);
+  if (!user) {
+    navigate("/login", { replace: true });
+    return;
+  }
+
+  if (user.isNew === false) {
+    navigate("/", { replace: true });
+  }
+}, []);
+
 
   const togglePreference = (item) => {
     setPreferences((prev) =>
@@ -45,18 +51,24 @@ const OnboardingPage = () => {
       return;
     }
 
-    const user = JSON.parse(localStorage.getItem("sr_user"));
+    const user = JSON.parse(
+  sessionStorage.getItem("sr_session_user")
+);
 
-    const updatedUser = {
-      ...user,
-      name,
-      preferences,
-      isNew: false, // ✅ onboarding completed
-    };
+const updatedUser = {
+  ...user,
+  name,
+  preferences,
+  isNew: false,
+};
 
-    localStorage.setItem("sr_user", JSON.stringify(updatedUser));
+sessionStorage.setItem(
+  "sr_session_user",
+  JSON.stringify(updatedUser)
+);
 
-    navigate("/");
+navigate("/", { replace: true });
+
   };
 
   return (

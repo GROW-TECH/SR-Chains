@@ -11,10 +11,12 @@ const ShopByCategory = () => {
   const [categoriesData, setCategoriesData] = useState({});
   const [loading, setLoading] = useState(true);
   const [showFilter, setShowFilter] = useState(false);
+  // const [keywordFilter, setKeywordFilter] = useState(null);
 
   /* FILTER STATES */
   const [sortBy, setSortBy] = useState("latest");
-  const [categoryFilter, setCategoryFilter] = useState(null); // GROUP NAME
+  const [categoryFilter, setCategoryFilter] = useState(null);
+  const [keywordFilter, setKeywordFilter] = useState(null);
 
   /* LOAD DATA */
   useEffect(() => {
@@ -31,25 +33,43 @@ const ShopByCategory = () => {
     loadCategories();
   }, []);
 
-  /* FLATTEN GROUPED DATA */
+  /* FLATTEN DATA */
   const flatCategories = Object.entries(categoriesData).flatMap(
     ([groupName, items]) =>
       items.map((item) => ({
         ...item,
-        group: groupName, // KEEP ORIGINAL GROUP NAME
+        group: groupName,
       }))
   );
 
-  /* APPLY FILTER */
+  /* APPLY FILTERS */
   let filteredCategories = [...flatCategories];
 
+  // Group filter
   if (categoryFilter) {
     filteredCategories = filteredCategories.filter(
       (item) => item.group === categoryFilter
     );
   }
 
-  /* APPLY SORT */
+  // Keyword filter
+  if (keywordFilter) {
+    filteredCategories = filteredCategories.filter((item) => {
+      const text = `${item.title} ${item.group}`.toLowerCase();
+
+      if (keywordFilter === "New Arrivals") {
+        return item.isNew === true;
+      }
+
+      if (keywordFilter === "Stock") {
+        return item.inStock === true;
+      }
+
+      return text.includes(keywordFilter.toLowerCase());
+    });
+  }
+
+  /* SORT */
   if (sortBy === "az") {
     filteredCategories.sort((a, b) =>
       a.title.localeCompare(b.title)
@@ -72,7 +92,17 @@ const ShopByCategory = () => {
   return (
     <>
       {/* SEARCH + FILTER HEADER */}
-      <SearchFilterHeader onFilterClick={() => setShowFilter(true)} />
+      <SearchFilterHeader
+  onFilterClick={() => setShowFilter(true)}
+  onKeywordClick={(keyword) => {
+    if (keyword === "All") {
+      setKeywordFilter(null); // ✅ RESET
+    } else {
+      setKeywordFilter(keyword);
+    }
+  }}
+/>
+
 
       {/* FILTER SHEET */}
       <FilterSheet
@@ -87,19 +117,25 @@ const ShopByCategory = () => {
       {/* CATEGORY GRID */}
       <div className="bg-[#fafafa] py-12 px-6">
         <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {filteredCategories.map((item, index) => (
-            <div
-              key={`${item.slug}-${index}`}
-              onClick={() => navigate(`/collection/${item.slug}`)}
-              className="cursor-pointer"
-            >
-              <CategoryCard
-                title={item.title}
-                img={item.img}
-                desc={item.group}
-              />
-            </div>
-          ))}
+          {filteredCategories.length === 0 ? (
+            <p className="text-gray-500 col-span-full text-center">
+              No categories found
+            </p>
+          ) : (
+            filteredCategories.map((item, index) => (
+              <div
+                key={`${item.slug}-${index}`}
+                onClick={() => navigate(`/collection/${item.slug}`)}
+                className="cursor-pointer"
+              >
+                <CategoryCard
+                  title={item.title}
+                  img={item.img}
+                  desc={item.group}
+                />
+              </div>
+            ))
+          )}
         </div>
       </div>
 
