@@ -65,10 +65,10 @@ const ProfilePage = () => {
           title="Wishlist"
           onClick={() => navigate("/wishlist")}
         />
-        <ProfileItem
+        {/* <ProfileItem
           title="Saved Addresses"
           onClick={() => navigate("/addresses")}
-        />
+        /> */}
         <ProfileItem
           title="Support"
           onClick={() => navigate("/support")}

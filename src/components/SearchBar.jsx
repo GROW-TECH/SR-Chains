@@ -84,7 +84,8 @@ const SearchBar = ({
   }, [searchTerm]);
 
   return (
-    <div className="relative w-full">
+    <div className="relative w-full" style={{ position: "sticky", top: "19px", zIndex: 999 }}
+>
       {/* Search Input */}
       <div className="flex items-center gap-3 bg-white p-4 rounded-lg shadow">
         <CiSearch className="text-2xl text-gray-500" />

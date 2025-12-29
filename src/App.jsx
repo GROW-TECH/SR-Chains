@@ -13,6 +13,8 @@ import OnboardingPage from "./pages/OnboardingPage";
 import CategoryProductsPage from "./pages/CategoryProductsPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { useEffect } from "react";
+import WishlistPage from "./pages/WishlistPage";
+import SupportPage from "./pages/SupportPage";
 
 // ✅ SIMPLE AUTH CHECK
 const isLoggedIn = () => {
@@ -23,6 +25,7 @@ const App = () => {
     <Routes>
       {/* PUBLIC */}
       <Route path="/" element={<HomePage />} />
+      <Route path="/support" element={<SupportPage />} />
       <Route path="/categories" element={<ShopByCategory />} />
       <Route path="/22kt-ready" element={<KTReadyPage />} />
 
@@ -50,6 +53,14 @@ const App = () => {
         element={
           <ProtectedRoute>
             <CartPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/wishlist"
+        element={
+          <ProtectedRoute>
+            <WishlistPage />
           </ProtectedRoute>
         }
       />
