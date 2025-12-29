@@ -12,12 +12,12 @@ import OtpPage from "./pages/LoginPage/OtpPage";
 import OnboardingPage from "./pages/OnboardingPage";
 import CategoryProductsPage from "./pages/CategoryProductsPage";
 import ProtectedRoute from "./components/ProtectedRoute";
+import { useEffect } from "react";
 
 // ✅ SIMPLE AUTH CHECK
 const isLoggedIn = () => {
   return !!sessionStorage.getItem("sr_session_user");
 };
-
 const App = () => {
   return (
     <Routes>

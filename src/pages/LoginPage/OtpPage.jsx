@@ -1,29 +1,39 @@
 import { useState, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
 const OtpPage = () => {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [timer, setTimer] = useState(18);
+  const [mobile, setMobile] = useState("");
+  const [tempUser, setTempUser] = useState(null);
+
   const navigate = useNavigate();
-  const { state } = useLocation();
 
-  const mobile = state?.mobile;
-
-  // ⏱️ OTP TIMER
+  /* ⏱️ OTP TIMER */
   useEffect(() => {
     const interval = setInterval(() => {
-      setTimer((prev) => (prev > 0 ? prev - 1 : 0));
+      setTimer((t) => (t > 0 ? t - 1 : 0));
     }, 1000);
     return () => clearInterval(interval);
   }, []);
 
-  // ❌ SAFETY CHECK
+  /* ✅ LOAD SESSION ONCE (CRITICAL FIX) */
   useEffect(() => {
-    if (!mobile) {
+    const temp = sessionStorage.getItem("sr_temp_user");
+
+    if (!temp) {
       navigate("/login", { replace: true });
+      return;
     }
-  }, [mobile]);
+
+    const parsed = JSON.parse(temp);
+
+    setTempUser(parsed);
+    setMobile(parsed.mobile);
+
+    console.log("OTP PAGE SESSION:", parsed);
+  }, [navigate]);
 
   const handleChange = (value, index) => {
     if (!/^[0-9]?$/.test(value)) return;
@@ -37,45 +47,38 @@ const OtpPage = () => {
     }
   };
 
- const verifyOtp = () => {
-  const enteredOtp = otp.join("");
-  if (enteredOtp.length !== 6) return;
+  const verifyOtp = () => {
+    const enteredOtp = otp.join("");
 
-  const tempUser = JSON.parse(sessionStorage.getItem("sr_temp_user"));
-  if (!tempUser) {
-    navigate("/login", { replace: true });
-    return;
-  }
+    if (enteredOtp.length !== 6) return;
 
-  // ✅ CREATE USER SESSION
-  const user = {
-    mobile: tempUser.mobile,
-    isNew: tempUser.flow === "signup",
-    loggedAt: Date.now(),
+    if (!tempUser) {
+      navigate("/login", { replace: true });
+      return;
+    }
+
+    /* ✅ CREATE LOGGED-IN USER */
+    const user = {
+      mobile: tempUser.mobile,
+      isNew: tempUser.flow === "signup",
+      loggedAt: Date.now(),
+    };
+
+    sessionStorage.setItem("sr_session_user", JSON.stringify(user));
+    // sessionStorage.removeItem("sr_temp_user");
+
+    console.log("LOGGED IN USER:", user);
+
+    if (user.isNew) {
+      navigate("/onboarding", { replace: true });
+    } else {
+      navigate("/", { replace: true });
+    }
   };
-
-  // 🔥 STORE IN LOCAL (PERSISTENT)
-  localStorage.setItem("sr_user", JSON.stringify(user));
-
-  // CLEAN TEMP
-  sessionStorage.removeItem("sr_temp_user");
-
-  // ROUTE
-  if (user.isNew) {
-    navigate("/onboarding", { replace: true });
-  } else {
-    navigate("/", { replace: true });
-  }
-};
-
 
   return (
     <main className="min-h-screen flex flex-col px-6 py-8">
-      {/* HEADER */}
-      <button
-        onClick={() => navigate(-1)}
-        className="text-xl mb-8"
-      >
+      <button onClick={() => navigate(-1)} className="text-xl mb-8">
         ← OTP Verification
       </button>
 
@@ -88,9 +91,8 @@ const OtpPage = () => {
         <p className="text-gray-600 mb-4">
           We have sent a verification code to
         </p>
-        <p className="font-semibold mb-8">
-          +91-{mobile}
-        </p>
+
+        <p className="font-semibold mb-8">+91-{mobile}</p>
 
         {/* OTP INPUTS */}
         <div className="flex justify-center gap-3 mb-6">
@@ -98,7 +100,6 @@ const OtpPage = () => {
             <input
               key={index}
               id={`otp-${index}`}
-              type="text"
               maxLength={1}
               value={digit}
               onChange={(e) =>
@@ -132,7 +133,6 @@ const OtpPage = () => {
           Verify OTP
         </button>
 
-        {/* BACK */}
         <button
           onClick={() => navigate("/login")}
           className="mt-6 text-red-500"
