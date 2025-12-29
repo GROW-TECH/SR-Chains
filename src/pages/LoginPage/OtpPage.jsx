@@ -60,6 +60,7 @@ const OtpPage = () => {
     /* ✅ CREATE LOGGED-IN USER */
     const user = {
       mobile: tempUser.mobile,
+      name:"Demo",
       isNew: tempUser.flow === "signup",
       loggedAt: Date.now(),
     };

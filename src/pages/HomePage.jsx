@@ -93,6 +93,19 @@ const HomePage = () => {
   const [minRating, setMinRating] = useState(null);
   const [categoryFilter, setCategoryFilter] = useState(null);
   const [sizeFilter, setSizeFilter] = useState(null);
+  const [bannerIndex, setBannerIndex] = useState(0);
+  const banners = [
+    {
+      img: "https://sunrisesilversmiths.com/cdn/shop/files/Websitebanners7_6df0cabb-7075-46d4-92db-e553fc2da42f.webp?v=1744096719",
+      title: "Pure Silver Jewellery",
+      subtitle: "Trusted • Elegant • Affordable",
+    },
+    {
+      img: "https://silvershops.in/images/banner_jewellery1.png",
+      title: "Wholesale & Bulk Orders",
+      subtitle: "Best Rates for Dealers",
+    },
+  ];
 
   /* AUTO SLIDE */
   useEffect(() => {
@@ -125,6 +138,15 @@ const HomePage = () => {
   if (sortBy === "latest") products.sort((a, b) => b.id - a.id);
   if (sortBy === "az") products.sort((a, b) => a.name.localeCompare(b.name));
 
+
+useEffect(() => {
+  const i = setInterval(() => {
+    setBannerIndex((p) => (p + 1) % banners.length);
+  }, 3500);
+  return () => clearInterval(i);
+}, []);
+
+
   return (
     <div className="bg-[#F2F2F0] min-h-screen text-[#30302F]">
 
@@ -140,6 +162,47 @@ const HomePage = () => {
       <div className="px-4 mt-3">
         <SearchBar placeholder="Search silver jewellery..." />
       </div>
+
+{/* BANNER SLIDER */}
+<section className="mt-4 px-4 overflow-hidden">
+  <div className="relative h-40 rounded-xl overflow-hidden">
+    <motion.div
+      className="flex h-full"
+      animate={{ x: `-${bannerIndex * 100}%` }}
+      transition={{ duration: 0.7, ease: "easeInOut" }}
+    >
+      {banners.map((b, i) => (
+        <div
+          key={i}
+          className="min-w-full relative h-40"
+        >
+          <img
+            src={b.img}
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-black/40" />
+          <div className="relative z-10 text-white p-4 flex flex-col justify-end h-full">
+            <p className="text-lg font-semibold">{b.title}</p>
+            <p className="text-sm">{b.subtitle}</p>
+          </div>
+        </div>
+      ))}
+    </motion.div>
+  </div>
+
+  {/* DOTS */}
+  <div className="flex justify-center gap-2 mt-2">
+    {banners.map((_, i) => (
+      <span
+        key={i}
+        className={`w-2 h-2 rounded-full transition-all ${
+          i === bannerIndex ? "bg-[#30302F]" : "bg-gray-300"
+        }`}
+      />
+    ))}
+  </div>
+</section>
+
 
       {/* CATEGORY ICONS */}
       <div className="flex justify-between px-4 mt-6">

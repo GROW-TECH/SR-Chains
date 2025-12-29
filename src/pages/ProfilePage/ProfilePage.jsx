@@ -6,7 +6,7 @@ import Footer from "../../components/Footer";
 
 const ProfilePage = () => {
   const navigate = useNavigate();
-  const user = JSON.parse(sessionStorage.getItem("sr_user"));
+  const user = JSON.parse(sessionStorage.getItem("sr_session_user"));
 
   const [showEdit, setShowEdit] = useState(false);
 
@@ -16,7 +16,7 @@ const ProfilePage = () => {
   }
 
   const logout = () => {
-    sessionStorage.removeItem("sr_user");
+    sessionStorage.removeItem("sr_session_user");
     navigate("/login");
   };
 
@@ -40,7 +40,7 @@ const ProfilePage = () => {
               {user.name || "Customer"}
             </h2>
             <p className="text-sm opacity-90">
-              +91 {user.phone}
+              +91 {user.mobile}
             </p>
           </div>
         </div>

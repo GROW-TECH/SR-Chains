@@ -31,6 +31,7 @@ const LoginPage = () => {
         "sr_temp_user",
         JSON.stringify({
           mobile,
+          name:"Demo",
           flow: "login",
           createdAt: Date.now(),
         })
