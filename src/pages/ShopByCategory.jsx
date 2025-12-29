@@ -114,30 +114,45 @@ const ShopByCategory = () => {
         setCategoryFilter={setCategoryFilter}
       />
 
-      {/* CATEGORY GRID */}
-      <div className="bg-[#fafafa] py-12 px-6">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {filteredCategories.length === 0 ? (
-            <p className="text-gray-500 col-span-full text-center">
-              No categories found
-            </p>
-          ) : (
-            filteredCategories.map((item, index) => (
-              <div
-                key={`${item.slug}-${index}`}
-                onClick={() => navigate(`/collection/${item.slug}`)}
-                className="cursor-pointer"
-              >
-                <CategoryCard
-                  title={item.title}
-                  img={item.img}
-                  desc={item.group}
-                />
-              </div>
-            ))
-          )}
+ {/* CATEGORY GRID */}
+<div className="bg-[#fafafa] py-12 px-6">
+  <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+
+    {/* ✅ ALL PRODUCTS CARD */}
+    <div
+      onClick={() => navigate("/collection/all")}
+      className="cursor-pointer"
+    >
+      <CategoryCard
+        title="All"
+        img="https://cdn-icons-png.flaticon.com/512/869/869636.png"
+        desc="All Products"
+      />
+    </div>
+
+    {/* EXISTING CATEGORIES */}
+    {filteredCategories.length === 0 ? (
+      <p className="text-gray-500 col-span-full text-center">
+        No categories found
+      </p>
+    ) : (
+      filteredCategories.map((item, index) => (
+        <div
+          key={`${item.slug}-${index}`}
+          onClick={() => navigate(`/collection/${item.slug}`)}
+          className="cursor-pointer"
+        >
+          <CategoryCard
+            title={item.title}
+            img={item.img}
+            desc={item.group}
+          />
         </div>
-      </div>
+      ))
+    )}
+  </div>
+</div>
+
 
       <Footer />
     </>

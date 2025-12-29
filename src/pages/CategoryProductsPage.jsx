@@ -7,17 +7,21 @@ import ProductCard from "../components/ProductCard";
 import Footer from "../components/Footer";
 
 const CategoryProductsPage = () => {
-  const { slug } = useParams();
+  const { slug } = useParams(); // slug can be undefined or "all"
   const navigate = useNavigate();
 
   const [showFilter, setShowFilter] = useState(false);
   const [search, setSearch] = useState("");
 
-  // ✅ FIXED LOGIC (flat array → filter by slug)
-  const products = productsData.filter(
-    (p) => p.categorySlug === slug
-  );
+  /* ================= PRODUCTS (ALL or CATEGORY) ================= */
+  const products =
+    !slug || slug === "all"
+      ? productsData // ✅ ALL PRODUCTS
+      : productsData.filter(
+          (p) => p.categorySlug === slug
+        );
 
+  /* ================= SEARCH FILTER ================= */
   const filteredProducts = products.filter((p) =>
     p.name.toLowerCase().includes(search.toLowerCase())
   );
@@ -40,7 +44,9 @@ const CategoryProductsPage = () => {
       {/* PRODUCT LIST */}
       <div className="bg-[#fafafa] px-4 pb-24">
         <h2 className="text-lg font-semibold py-4 capitalize">
-          {slug.replace(/-/g, " ")}
+          {slug && slug !== "all"
+            ? slug.replace(/-/g, " ")
+            : "All Products"}
         </h2>
 
         {filteredProducts.length === 0 ? (
@@ -54,7 +60,7 @@ const CategoryProductsPage = () => {
         )}
       </div>
 
-      <Footer/>
+      <Footer />
     </>
   );
 };
