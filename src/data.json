@@ -1,0 +1,178 @@
+[
+  {
+    "imageUrl": "https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0",
+    "discountText": "50% OFF",
+    "name": "Silver Ring",
+    "rating": 4.2,
+    "diningRating": 0,
+    "cuisine": ["Jewelry", "Silver"],
+    "cost": 1200,
+    "deliveryTime": 3,
+    "safeDelivery": true
+  },
+  {
+    "imageUrl": "https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0",
+    "discountText": "40% OFF",
+    "name": "Silver Necklace",
+    "rating": 4.4,
+    "diningRating": 0,
+    "cuisine": ["Jewelry", "Silver"],
+    "cost": 2500,
+    "deliveryTime": 4,
+    "safeDelivery": true
+  },
+  {
+    "imageUrl": "https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0",
+    "discountText": "30% OFF",
+    "name": "Silver Bracelet",
+    "rating": 4.1,
+    "diningRating": 0,
+    "cuisine": ["Jewelry", "Silver"],
+    "cost": 1800,
+    "deliveryTime": 3,
+    "safeDelivery": true
+  },
+  {
+    "imageUrl": "https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0",
+    "discountText": "50% OFF",
+    "name": "Silver Earrings",
+    "rating": 4.5,
+    "diningRating": 0,
+    "cuisine": ["Jewelry", "Silver"],
+    "cost": 1500,
+    "deliveryTime": 2,
+    "safeDelivery": true
+  },
+  {
+    "imageUrl": "https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0",
+    "discountText": "20% OFF",
+    "name": "Silver Anklet",
+    "rating": 4.0,
+    "diningRating": 0,
+    "cuisine": ["Jewelry", "Silver"],
+    "cost": 1100,
+    "deliveryTime": 3,
+    "safeDelivery": true
+  },
+  {
+    "imageUrl": "https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0",
+    "discountText": "35% OFF",
+    "name": "Silver Pendant",
+    "rating": 4.3,
+    "diningRating": 0,
+    "cuisine": ["Jewelry", "Silver"],
+    "cost": 1300,
+    "deliveryTime": 2,
+    "safeDelivery": true
+  },
+  {
+    "imageUrl": "https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0",
+    "discountText": "25% OFF",
+    "name": "Silver Bangle",
+    "rating": 4.2,
+    "diningRating": 0,
+    "cuisine": ["Jewelry", "Silver"],
+    "cost": 2200,
+    "deliveryTime": 4,
+    "safeDelivery": true
+  },
+  {
+    "imageUrl": "https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0",
+    "discountText": "45% OFF",
+    "name": "Silver Toe Ring",
+    "rating": 3.9,
+    "diningRating": 0,
+    "cuisine": ["Jewelry", "Silver"],
+    "cost": 600,
+    "deliveryTime": 2,
+    "safeDelivery": true
+  },
+  {
+    "imageUrl": "https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0",
+    "discountText": "50% OFF",
+    "name": "Silver Chain",
+    "rating": 4.4,
+    "diningRating": 0,
+    "cuisine": ["Jewelry", "Silver"],
+    "cost": 2700,
+    "deliveryTime": 5,
+    "safeDelivery": true
+  },
+  {
+    "imageUrl": "https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0",
+    "discountText": "30% OFF",
+    "name": "Silver Kada",
+    "rating": 4.1,
+    "diningRating": 0,
+    "cuisine": ["Jewelry", "Silver"],
+    "cost": 2400,
+    "deliveryTime": 4,
+    "safeDelivery": true
+  },
+  {
+    "imageUrl": "https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0",
+    "discountText": "40% OFF",
+    "name": "Silver Charm Bracelet",
+    "rating": 4.5,
+    "diningRating": 0,
+    "cuisine": ["Jewelry", "Silver"],
+    "cost": 2600,
+    "deliveryTime": 3,
+    "safeDelivery": true
+  },
+  {
+    "imageUrl": "https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0",
+    "discountText": "20% OFF",
+    "name": "Silver Stud Earrings",
+    "rating": 4.3,
+    "diningRating": 0,
+    "cuisine": ["Jewelry", "Silver"],
+    "cost": 1400,
+    "deliveryTime": 2,
+    "safeDelivery": true
+  },
+  {
+    "imageUrl": "https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0",
+    "discountText": "35% OFF",
+    "name": "Silver Pearl Necklace",
+    "rating": 4.6,
+    "diningRating": 0,
+    "cuisine": ["Jewelry", "Silver"],
+    "cost": 3200,
+    "deliveryTime": 5,
+    "safeDelivery": true
+  },
+  {
+    "imageUrl": "https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0",
+    "discountText": "50% OFF",
+    "name": "Silver Oxidized Jhumka",
+    "rating": 4.7,
+    "diningRating": 0,
+    "cuisine": ["Jewelry", "Silver"],
+    "cost": 1900,
+    "deliveryTime": 3,
+    "safeDelivery": true
+  },
+  {
+    "imageUrl": "https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0",
+    "discountText": "25% OFF",
+    "name": "Silver Cuff Bracelet",
+    "rating": 4.2,
+    "diningRating": 0,
+    "cuisine": ["Jewelry", "Silver"],
+    "cost": 2100,
+    "deliveryTime": 4,
+    "safeDelivery": true
+  },
+  {
+    "imageUrl": "https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0",
+    "discountText": "30% OFF",
+    "name": "Silver Mangalsutra",
+    "rating": 4.5,
+    "diningRating": 0,
+    "cuisine": ["Jewelry", "Silver"],
+    "cost": 3500,
+    "deliveryTime": 5,
+    "safeDelivery": true
+  }
+]
